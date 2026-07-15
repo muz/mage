@@ -83,6 +83,39 @@ public class PrepareTest extends CardTestPlayerBase {
     }
 
     @Test
+    public void testCopiedPermanentUsesCopiedPrepareCharacteristics() {
+        PrepareCard source = createPrepareCard("Elite Interceptor");
+        source.setOwnerId(playerA.getId());
+        Card base = createCard("Silvercoat Lion");
+        base.setOwnerId(playerA.getId());
+        PermanentCard permanent = new PermanentCard(base, playerA.getId(), currentGame);
+        permanent.setCopy(true, source);
+
+        Optional<PrepareSpellCharacteristics> characteristics = PrepareUtil.getPrepareSpellCharacteristics(permanent, currentGame);
+
+        Assert.assertTrue("copied preparation permanent must expose prepare spell characteristics", characteristics.isPresent());
+        Assert.assertEquals("copied characteristics must use prepare spell name", "Rejoinder", characteristics.get().getName());
+        permanent.setPrepared(true, currentGame);
+        Assert.assertTrue("copied preparation permanent can gain prepared", permanent.isPrepared());
+    }
+
+    @Test
+    public void testPreparePermanentCopyingNonPrepareObjectCannotGainPrepared() {
+        PrepareCard base = createPrepareCard("Elite Interceptor");
+        base.setOwnerId(playerA.getId());
+        Card source = createCard("Silvercoat Lion");
+        source.setOwnerId(playerA.getId());
+        PermanentCard permanent = new PermanentCard(base, playerA.getId(), currentGame);
+        permanent.setCopy(true, source);
+
+        Optional<PrepareSpellCharacteristics> characteristics = PrepareUtil.getPrepareSpellCharacteristics(permanent, currentGame);
+
+        Assert.assertFalse("non-Prepare copy source must not expose prepare spell characteristics", characteristics.isPresent());
+        permanent.setPrepared(true, currentGame);
+        Assert.assertFalse("permanent copying a non-Prepare object cannot gain prepared", permanent.isPrepared());
+    }
+
+    @Test
     public void testEntersPreparedCreatesTrackedExiledCopy() {
         setStrictChooseMode(true);
 
@@ -280,10 +313,14 @@ public class PrepareTest extends CardTestPlayerBase {
         assertExileCount(playerA, "Rejoinder", 1);
     }
 
-    private PrepareCard createPrepareCard(String cardName) {
+    private Card createCard(String cardName) {
         CardInfo cardInfo = CardRepository.instance.findCard(cardName);
         Assert.assertNotNull("test fixture must exist: " + cardName, cardInfo);
-        Card card = cardInfo.createCard();
+        return cardInfo.createCard();
+    }
+
+    private PrepareCard createPrepareCard(String cardName) {
+        Card card = createCard(cardName);
         Assert.assertTrue("test fixture must be a PrepareCard: " + cardName, card instanceof PrepareCard);
         return (PrepareCard) card;
     }

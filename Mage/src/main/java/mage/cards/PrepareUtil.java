@@ -1,5 +1,6 @@
 package mage.cards;
 
+import mage.MageObject;
 import mage.MageObjectReference;
 import mage.abilities.Ability;
 import mage.abilities.common.SimpleStaticAbility;
@@ -27,17 +28,43 @@ public final class PrepareUtil {
     }
 
     public static Optional<PrepareSpellCharacteristics> getPrepareSpellCharacteristics(Card card) {
-        if (card instanceof PrepareCard) {
-            return Optional.of(new PrepareSpellCharacteristics(((PrepareCard) card).getSpellCard()));
+        return getPrepareSpellCharacteristics((MageObject) card, null);
+    }
+
+    private static Optional<PrepareSpellCharacteristics> getPrepareSpellCharacteristics(MageObject object, Game game) {
+        if (object == null) {
+            return Optional.empty();
+        }
+        if (object.isCopy() && object.getCopyFrom() != null) {
+            // CR 722.2b / 707.2: prepare spell characteristics are part of copiable values.
+            return getPrepareSpellCharacteristics(object.getCopyFrom(), game);
+        }
+        if (object instanceof PrepareCard) {
+            return Optional.of(new PrepareSpellCharacteristics(((PrepareCard) object).getSpellCard()));
+        }
+        if (object instanceof PermanentCard) {
+            return getPrepareSpellCharacteristics(((PermanentCard) object).getCard(), game);
+        }
+        if (object instanceof Permanent) {
+            MageObject basicObject = ((Permanent) object).getBasicMageObject();
+            if (basicObject != object) {
+                return getPrepareSpellCharacteristics(basicObject, game);
+            }
         }
         return Optional.empty();
     }
 
     public static Optional<PrepareSpellCharacteristics> getPrepareSpellCharacteristics(Permanent permanent, Game game) {
-        if (permanent instanceof PermanentCard) {
-            return getPrepareSpellCharacteristics(((PermanentCard) permanent).getCard());
+        if (permanent == null) {
+            return Optional.empty();
         }
-        return Optional.empty();
+        List<UUID> mutateObjects = permanent.getMutateForView();
+        if (!mutateObjects.isEmpty() && !permanent.getId().equals(mutateObjects.get(0))) {
+            // CR 730.2a: merged permanent characteristics come from the top component.
+            MageObject topComponent = game == null ? null : game.getObject(mutateObjects.get(0));
+            return getPrepareSpellCharacteristics(topComponent, game);
+        }
+        return getPrepareSpellCharacteristics((MageObject) permanent, game);
     }
 
     public static PrepareSpellCopyCard createPrepareSpellCopy(PrepareSpellCharacteristics characteristics, UUID copyCreatorId) {

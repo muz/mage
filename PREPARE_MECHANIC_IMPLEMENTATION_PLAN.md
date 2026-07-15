@@ -1,10 +1,11 @@
 # Prepare Mechanic Implementation Plan
 
 Status: implementation in progress. Slice 1, Slice 2, the initial Slice 3 code,
-initial Slice 4 explicit cleanup, and Slice 5 phasing support have been added
-on branch `prepare_mechanic` and statically checked; runtime test execution
-still needs a local Maven-capable run. Later slices in this document remain
-planned work until their code lands.
+initial Slice 4 explicit cleanup, Slice 5 phasing support, and the initial
+Slice 6/7 prepare-characteristics resolver work have been added on branch
+`prepare_mechanic` and statically checked; runtime test execution still needs a
+local Maven-capable run. Later slices in this document remain planned work until
+their code lands.
 
 This document records the rule model, current Mage code facts, corrected design
 decisions, and remaining questions for implementing the Magic: The Gathering
@@ -298,12 +299,14 @@ Mutate/merged-permanent code facts:
   `PermanentImpl#mutate` keeps the same permanent object/id for the merged
   permanent. A prepared permanent that mutates therefore keeps the designation on
   the correct merged permanent object.
-- Current prepare eligibility is not mutate-correct:
-  `PermanentImpl#setPrepared` checks `getMainCard() instanceof PrepareCard`.
-  That ignores top-component merged-permanent semantics and can be wrong in both
-  directions: a preparation base underneath a non-Prepare top component may be
-  allowed incorrectly, while a non-Prepare base with a preparation card mutated
-  on top may be rejected incorrectly.
+- Initial prepare eligibility is now resolver-backed:
+  `PermanentImpl#setPrepared` checks
+  `PrepareUtil.getPrepareSpellCharacteristics(this, game).isPresent()` instead
+  of `getMainCard() instanceof PrepareCard`.
+- The initial resolver treats copy provenance as authoritative and inspects the
+  top component of merged permanents through `getMutateForView()`. Full
+  copied-token gameplay coverage, mutate gameplay coverage, and edge cases
+  where copy provenance cannot be resolved still need runtime-backed testing.
 
 ## Corrected Architecture
 
@@ -1977,6 +1980,19 @@ Goal: let copied permanents and token copies become prepared when their
 copiable values include prepare spell characteristics, while copying only the
 prepare spell characteristics into exile.
 
+Current implementation notes:
+
+- `PrepareUtil.getPrepareSpellCharacteristics(...)` now resolves through
+  `MageObject#getCopyFrom()` before physical card fallback. This makes copy
+  provenance authoritative: a non-Prepare permanent copying a preparation card
+  can expose prepare spell characteristics, while a physical preparation
+  permanent copying a non-Prepare object cannot.
+- `PermanentImpl#setPrepared(...)` now uses the resolver for the CR 722.3a
+  marker gate instead of checking the backing card class directly.
+- Initial helper-level coverage asserts both copy-provenance directions.
+- Full end-to-end copied permanent and token-copy gameplay coverage remains
+  required before this slice is complete.
+
 Work:
 
 - Expand `PrepareSpellCharacteristics` resolution beyond physical
@@ -1999,11 +2015,14 @@ Work:
 Tests:
 
 - Copy of a physical preparation permanent can become prepared and creates a
-  castable exiled copy.
+  castable exiled copy. Initial helper-level coverage asserts resolver and
+  marker eligibility; full castable-copy coverage remains required.
 - Token copy of a preparation permanent can become prepared and creates a
   castable exiled copy.
 - Copy of an already prepared permanent is not itself prepared and does not
   inherit the original source's live exiled copy.
+- Physical preparation permanent copying a non-Prepare object cannot gain
+  prepared. Initial helper-level coverage added.
 - A noncreature token copy with prepare spell characteristics can become
   prepared when a legal effect instructs that object to become prepared.
 - Copy/token modifications that are not part of the prepare spell
@@ -2024,6 +2043,19 @@ Do not include yet:
 
 Goal: make Prepare eligibility and lifecycle correct for merged permanents
 without moving prepared state off the permanent object.
+
+Current implementation notes:
+
+- The initial resolver inspects `Permanent#getMutateForView()`. If the top
+  component id is not the permanent id, it resolves prepare spell
+  characteristics from that top component only.
+- If the top component is the permanent id, the resolver falls back to the
+  source permanent's own card/copy provenance.
+- Lower mutation components do not supply prepare spell characteristics through
+  this resolver unless they are the current top component.
+- This covers the core CR 730.2a eligibility gate statically, but mutate
+  gameplay tests still need to prove merge-over, merge-under, phase-in, and
+  enters-prepared behavior.
 
 Work:
 
