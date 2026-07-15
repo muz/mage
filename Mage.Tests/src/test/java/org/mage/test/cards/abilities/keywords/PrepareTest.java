@@ -208,6 +208,30 @@ public class PrepareTest extends CardTestPlayerBase {
         assertExileCount(playerA, "Rejoinder", 0);
     }
 
+    @Test
+    public void testPrepareCastPermissionFollowsCurrentController() {
+        setStrictChooseMode(true);
+
+        addCard(Zone.BATTLEFIELD, playerA, "Island", 4);
+        addCard(Zone.BATTLEFIELD, playerA, "Silvercoat Lion");
+        addCard(Zone.HAND, playerA, "Skycoach Conductor");
+
+        addCard(Zone.BATTLEFIELD, playerB, "Mountain", 3);
+        addCard(Zone.BATTLEFIELD, playerB, "Island");
+        addCard(Zone.BATTLEFIELD, playerB, "Pillarfield Ox");
+        addCard(Zone.HAND, playerB, "Act of Treason");
+
+        castSpell(1, PhaseStep.PRECOMBAT_MAIN, playerA, "Skycoach Conductor", true);
+        checkPlayableAbility("old controller can cast before control changes", 1, PhaseStep.PRECOMBAT_MAIN, playerA, "Cast All Aboard", true);
+
+        castSpell(2, PhaseStep.PRECOMBAT_MAIN, playerB, "Act of Treason", "Skycoach Conductor", true);
+        checkPlayableAbility("old controller loses Prepare permission", 2, PhaseStep.PRECOMBAT_MAIN, playerA, "Cast All Aboard", false);
+        checkPlayableAbility("new controller gains Prepare permission", 2, PhaseStep.PRECOMBAT_MAIN, playerB, "Cast All Aboard", true);
+
+        setStopAt(2, PhaseStep.BEGIN_COMBAT);
+        execute();
+    }
+
     private PrepareCard createPrepareCard(String cardName) {
         CardInfo cardInfo = CardRepository.instance.findCard(cardName);
         Assert.assertNotNull("test fixture must exist: " + cardName, cardInfo);

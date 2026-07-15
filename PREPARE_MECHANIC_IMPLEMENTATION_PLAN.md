@@ -1838,8 +1838,11 @@ Current implementation notes:
   cleanup.
 - Initial helper-level coverage also verifies explicit unprepare removes the
   exiled copy, copied-card registration, and `PrepareCopyInfo`.
-- Rollback/bookmark-specific assertions, explicit control-change tests, and
-  simulation mutation checks remain to be implemented.
+- Initial control-change coverage uses `Skycoach Conductor` / `All Aboard` and
+  `Act of Treason` to prove cast permission follows the source permanent's
+  current controller rather than the copied-card owner.
+- Rollback/bookmark-specific assertions and simulation mutation checks remain
+  to be implemented.
 
 Work:
 
@@ -1881,7 +1884,7 @@ Tests:
   only through normal enters/gain-prepared handling.
 - Control changes: old controller loses permission, new controller gains
   permission, copy is not recreated, bookkeeping owner does not become casting
-  authority.
+  authority. Initial playable-permission coverage added.
 - Bookmark/rollback to before prepare removes marker, copied card, exile
   membership, tracking, and permission effect.
 - Bookmark/rollback to after prepare restores all of those pieces coherently.
