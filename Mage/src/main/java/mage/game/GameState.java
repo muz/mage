@@ -1047,6 +1047,8 @@ public class GameState implements Serializable, Copyable<GameState> {
         watchers.watch(event, game);
         // CR 722.3c / 601.2i: consume Prepare before same-event cast triggers inspect game state.
         PrepareUtil.consumePrepareSpellCast(event, game);
+        // CR 722.3c: a Prepare copy stops existing when its source leaves the battlefield.
+        PrepareUtil.handlePrepareZoneChange(event, game);
         delayed.checkTriggers(event, game);
         triggers.checkTriggers(event, game);
     }

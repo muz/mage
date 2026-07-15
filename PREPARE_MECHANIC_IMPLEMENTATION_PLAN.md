@@ -1,9 +1,10 @@
 # Prepare Mechanic Implementation Plan
 
-Status: implementation in progress. Slice 1, Slice 2, and the initial Slice 3
-code have been added on branch `prepare_mechanic` and statically checked;
-runtime test execution still needs a local Maven-capable run. Later slices in
-this document remain planned work until their code lands.
+Status: implementation in progress. Slice 1, Slice 2, the initial Slice 3 code,
+and initial Slice 4 source-leaves cleanup have been added on branch
+`prepare_mechanic` and statically checked; runtime test execution still needs a
+local Maven-capable run. Later slices in this document remain planned work until
+their code lands.
 
 This document records the rule model, current Mage code facts, corrected design
 decisions, and remaining questions for implementing the Magic: The Gathering
@@ -1819,6 +1820,25 @@ Do not include yet:
 Goal: make lifecycle cleanup robust and prove Prepare state survives simulation,
 bookmark, and rollback boundaries coherently.
 
+Current implementation notes:
+
+- `PrepareUtil` now has a zone-aware Prepare-copy removal helper:
+  `Zone.EXILED` removes the card from the real exile zone, clears copied-card
+  registration, sets the copy outside, clears tracking, and discards permission;
+  `Zone.STACK` clears tracking/permission but leaves the stack spell and copied
+  card registration alone.
+- `GameState#handleEvent` calls `PrepareUtil.handlePrepareZoneChange(...)`
+  after the successful-cast consumption hook and before delayed/normal
+  triggers.
+- `handlePrepareZoneChange(...)` removes the live exile copy when the tracked
+  source permanent moves from battlefield to a non-battlefield zone, citing CR
+  722.3c.
+- Initial test coverage covers a prepared `Elite Interceptor` being returned to
+  hand by `Unsummon` before `Rejoinder` is cast. It asserts tracking and exile
+  cleanup.
+- Rollback/bookmark-specific assertions, explicit control-change tests, and
+  simulation mutation checks remain to be implemented.
+
 Work:
 
 - Implement zone-aware removal for tracked Prepare copies:
@@ -1847,7 +1867,8 @@ Tests:
 
 - Unpreparing removes the exiled copy and permission effect.
 - Source leaves the battlefield before the copy is cast: copy is removed or at
-  least uncastable immediately, then physically cleaned up.
+  least uncastable immediately, then physically cleaned up. Initial coverage
+  added for the ordinary zone-change path.
 - Source leaves the battlefield after the copy has been successfully cast: the
   source was already unprepared, no live exile copy remains, and the copied
   spell on the stack is not removed by source cleanup.

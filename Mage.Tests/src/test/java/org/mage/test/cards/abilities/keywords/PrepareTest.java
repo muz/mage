@@ -160,6 +160,28 @@ public class PrepareTest extends CardTestPlayerBase {
         assertHandCount(playerA, "Island", 1);
     }
 
+    @Test
+    public void testSourceLeavingBattlefieldBeforeCastRemovesPrepareCopy() {
+        setStrictChooseMode(true);
+
+        addCard(Zone.BATTLEFIELD, playerA, "Plains", 3);
+        addCard(Zone.HAND, playerA, "Elite Interceptor");
+        addCard(Zone.BATTLEFIELD, playerB, "Island");
+        addCard(Zone.HAND, playerB, "Unsummon");
+
+        castSpell(1, PhaseStep.PRECOMBAT_MAIN, playerA, "Elite Interceptor", true);
+        checkPlayableAbility("prepare copy exists before source leaves", 1, PhaseStep.PRECOMBAT_MAIN, playerA, "Cast Rejoinder", true);
+        castSpell(2, PhaseStep.PRECOMBAT_MAIN, playerB, "Unsummon", "Elite Interceptor", true);
+
+        setStopAt(2, PhaseStep.BEGIN_COMBAT);
+        execute();
+
+        Assert.assertEquals("source leaving must clear Prepare tracking", 0, currentGame.getState().getPrepareCopyInfos().size());
+        assertPermanentCount(playerA, "Elite Interceptor", 0);
+        assertHandCount(playerA, "Elite Interceptor", 1);
+        assertExileCount(playerA, "Rejoinder", 0);
+    }
+
     private PrepareCard createPrepareCard(String cardName) {
         CardInfo cardInfo = CardRepository.instance.findCard(cardName);
         Assert.assertNotNull("test fixture must exist: " + cardName, cardInfo);

@@ -9,9 +9,11 @@ import mage.constants.Zone;
 import mage.game.Game;
 import mage.game.PrepareCopyInfo;
 import mage.game.events.GameEvent;
+import mage.game.events.ZoneChangeEvent;
 import mage.game.permanent.Permanent;
 import mage.game.permanent.PermanentCard;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -112,6 +114,29 @@ public final class PrepareUtil {
         return true;
     }
 
+    public static boolean handlePrepareZoneChange(GameEvent event, Game game) {
+        if (!(event instanceof ZoneChangeEvent) || game == null) {
+            return false;
+        }
+        ZoneChangeEvent zoneChangeEvent = (ZoneChangeEvent) event;
+        if (!Zone.BATTLEFIELD.match(zoneChangeEvent.getFromZone())
+                || Zone.BATTLEFIELD.match(zoneChangeEvent.getToZone())) {
+            return false;
+        }
+
+        boolean removed = false;
+        for (PrepareCopyInfo info : new ArrayList<>(game.getState().getPrepareCopyInfos())) {
+            if (zoneChangeEvent.getTarget() == null
+                    || !info.getSourcePermanentReference().refersTo(zoneChangeEvent.getTarget(), game)) {
+                continue;
+            }
+            // CR 722.3c: the exile copy exists only while the linked source remains on the battlefield.
+            removePrepareCopy(info, game);
+            removed = true;
+        }
+        return removed;
+    }
+
     private static void clearPrepared(Permanent permanent, Game game) {
         MageObjectReference sourcePermanentReference = new MageObjectReference(permanent, game);
         permanent.setPrepared(false, game);
@@ -130,7 +155,21 @@ public final class PrepareUtil {
         if (info == null) {
             return;
         }
+        removePrepareCopy(info, game);
+    }
+
+    private static void removePrepareCopy(PrepareCopyInfo info, Game game) {
+        game.getState().removePrepareCopyInfo(info.getSourcePermanentReference());
         discardPrepareCastPermission(info.getCopyId(), game);
+
+        Zone zone = game.getState().getZone(info.getCopyId());
+        if (Zone.STACK.equals(zone)) {
+            return;
+        }
+        if (zone != null && !Zone.EXILED.equals(zone) && !Zone.OUTSIDE.equals(zone)) {
+            return;
+        }
+
         Card copyCard = game.getState().removePrepareSpellCopy(info.getCopyId());
         if (copyCard != null) {
             game.getExile().removeCard(copyCard);
