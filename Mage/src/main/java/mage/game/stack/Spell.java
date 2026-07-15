@@ -61,6 +61,7 @@ public class Spell extends StackObjectImpl implements Card {
     private boolean faceDown;
     private boolean countered;
     private boolean resolving = false;
+    private boolean prepareSpell;
     private UUID commandedByPlayerId = null; // controller of the spell resolve, example: Word of Command
     private String commandedByInfo; // info about spell commanded, e.g. source
     private boolean prototyped;
@@ -154,6 +155,7 @@ public class Spell extends StackObjectImpl implements Card {
         this.faceDown = spell.faceDown;
         this.countered = spell.countered;
         this.resolving = spell.resolving;
+        this.prepareSpell = spell.prepareSpell;
         this.commandedByPlayerId = spell.commandedByPlayerId;
         this.commandedByInfo = spell.commandedByInfo;
 
@@ -881,6 +883,7 @@ public class Spell extends StackObjectImpl implements Card {
             spellCopy.addSpellAbility(newAbility);
         }
         spellCopy.setCopy(true, this);
+        spellCopy.setPrepareSpell(this.wasPrepareSpell());
         spellCopy.setControllerId(newController);
         spellCopy.syncZoneChangeCounterOnStack(this, game);
         return spellCopy;
@@ -1026,10 +1029,22 @@ public class Spell extends StackObjectImpl implements Card {
         return this.wasCast() && this.fromZone.match(zone);
     }
 
+    public boolean wasPrepareSpell() {
+        return prepareSpell;
+    }
+
+    public void setPrepareSpell(boolean prepareSpell) {
+        this.prepareSpell = prepareSpell;
+    }
+
     @Override
     public void setCopy(boolean isCopy, MageObject copyFrom) {
         this.copy = isCopy;
         this.copyFrom = (copyFrom != null ? copyFrom.copy() : null);
+        if (copyFrom instanceof Spell && ((Spell) copyFrom).wasPrepareSpell()) {
+            // CR 722.3d: a copy of a prepare spell on the stack remains a prepare spell.
+            this.prepareSpell = true;
+        }
     }
 
     /**

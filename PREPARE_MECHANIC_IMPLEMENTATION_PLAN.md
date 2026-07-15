@@ -1,11 +1,11 @@
 # Prepare Mechanic Implementation Plan
 
 Status: implementation in progress. Slice 1, Slice 2, the initial Slice 3 code,
-initial Slice 4 explicit cleanup, Slice 5 phasing support, and the initial
-Slice 6/7 prepare-characteristics resolver work have been added on branch
-`prepare_mechanic` and statically checked; runtime test execution still needs a
-local Maven-capable run. Later slices in this document remain planned work until
-their code lands.
+initial Slice 4 explicit cleanup, Slice 5 phasing support, the initial Slice 6/7
+prepare-characteristics resolver work, and initial Slice 9 prepare-spell stack
+metadata have been added on branch `prepare_mechanic` and statically checked;
+runtime test execution still needs a local Maven-capable run. Later slices in
+this document remain planned work until their code lands.
 
 This document records the rule model, current Mage code facts, corrected design
 decisions, and remaining questions for implementing the Magic: The Gathering
@@ -2158,6 +2158,17 @@ Done when:
 Goal: make preparation cards visible and searchable correctly without leaking
 direct castability of the inset spell, and prove card-vs-spell wording follows
 the CR model.
+
+Current implementation notes:
+
+- `Spell` now has explicit `wasPrepareSpell()` metadata.
+- `PlayerImpl#cast(...)` sets that metadata when the cast card is a
+  `PrepareSpellCopyCard`.
+- `Spell#copy()`, `Spell#copySpell(...)`, and `Spell#setCopy(true, copyFrom)`
+  preserve the metadata for stack-spell copies under CR 722.3d.
+- Initial helper-level coverage asserts the metadata survives spell-state copy
+  and stack-copy provenance. Full stack-copy gameplay coverage remains
+  required before this slice is complete.
 
 Work:
 

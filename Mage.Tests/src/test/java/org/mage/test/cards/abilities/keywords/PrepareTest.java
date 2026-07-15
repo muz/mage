@@ -17,6 +17,7 @@ import mage.game.PrepareCopyInfo;
 import mage.game.events.GameEvent;
 import mage.game.permanent.Permanent;
 import mage.game.permanent.PermanentCard;
+import mage.game.stack.Spell;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mage.test.serverside.base.CardTestPlayerBase;
@@ -113,6 +114,25 @@ public class PrepareTest extends CardTestPlayerBase {
         Assert.assertFalse("non-Prepare copy source must not expose prepare spell characteristics", characteristics.isPresent());
         permanent.setPrepared(true, currentGame);
         Assert.assertFalse("permanent copying a non-Prepare object cannot gain prepared", permanent.isPrepared());
+    }
+
+    @Test
+    public void testPrepareSpellMetadataSurvivesSpellCopies() {
+        PrepareCard source = createPrepareCard("Elite Interceptor");
+        PrepareSpellCharacteristics characteristics = PrepareUtil
+                .getPrepareSpellCharacteristics(source)
+                .orElseThrow(AssertionError::new);
+        PrepareSpellCopyCard copyCard = PrepareUtil.createPrepareSpellCopy(characteristics, playerA.getId());
+        Spell spell = new Spell(copyCard, copyCard.getSpellAbility().copy(), playerA.getId(), Zone.EXILED, currentGame);
+
+        spell.setPrepareSpell(true);
+
+        Assert.assertTrue("cast prepare copy must remember prepare-spell metadata", spell.wasPrepareSpell());
+        Assert.assertTrue("copied game state must preserve prepare-spell metadata", spell.copy().wasPrepareSpell());
+
+        Spell stackCopy = new Spell(copyCard.copy(), copyCard.getSpellAbility().copy(), playerA.getId(), Zone.STACK, currentGame);
+        stackCopy.setCopy(true, spell);
+        Assert.assertTrue("stack copy must preserve prepare-spell metadata", stackCopy.wasPrepareSpell());
     }
 
     @Test

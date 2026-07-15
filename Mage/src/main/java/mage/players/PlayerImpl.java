@@ -1372,6 +1372,10 @@ public abstract class PlayerImpl implements Player, Serializable {
                 if (card.isCopy()) {
                     spell.setCopy(true, null);
                 }
+                if (card instanceof PrepareSpellCopyCard) {
+                    // CR 722.3d: the cast stack object remembers it was cast as a prepare spell.
+                    spell.setPrepareSpell(true);
+                }
                 // Update the zcc to the stack
                 ability.initSourceObjectZoneChangeCounter(game, true);
 
