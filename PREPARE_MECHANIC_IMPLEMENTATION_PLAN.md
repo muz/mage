@@ -1,6 +1,9 @@
 # Prepare Mechanic Implementation Plan
 
-Status: planning document only. No engine implementation has been done yet.
+Status: implementation in progress. Slice 1 code has been added on branch
+`prepare_mechanic` and statically checked; runtime test execution still needs a
+local Maven-capable run. Later slices in this document remain planned work until
+their code lands.
 
 This document records the rule model, current Mage code facts, corrected design
 decisions, and remaining questions for implementing the Magic: The Gathering

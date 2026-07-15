@@ -11,7 +11,7 @@ import java.util.UUID;
  * @author TheElk801
  * TODO: Implement properly
  */
-public class PrepareSpellCard extends CardImpl {
+public class PrepareSpellCard extends CardImpl implements SubCard<PrepareCard> {
 
     private PrepareCard prepareCardParent;
 
@@ -28,11 +28,21 @@ public class PrepareSpellCard extends CardImpl {
 
     protected PrepareSpellCard(final PrepareSpellCard card) {
         super(card);
-        this.prepareCardParent = card.prepareCardParent;
+        this.prepareCardParent = null;
     }
 
     @Override
     public PrepareSpellCard copy() {
         return new PrepareSpellCard(this);
+    }
+
+    @Override
+    public void setParentCard(PrepareCard card) {
+        this.prepareCardParent = card;
+    }
+
+    @Override
+    public PrepareCard getParentCard() {
+        return this.prepareCardParent;
     }
 }

@@ -10,7 +10,7 @@ import java.util.UUID;
  */
 public abstract class PrepareCard extends CardImpl {
 
-    protected Card spellCard;
+    protected PrepareSpellCard spellCard;
 
     protected PrepareCard(UUID ownerId, CardSetInfo setInfo, CardType[] types, String costs, String preparationName, CardType typeSpell, String costsSpell) {
         this(ownerId, setInfo, types, costs, preparationName, new CardType[]{typeSpell}, costsSpell);
@@ -23,9 +23,23 @@ public abstract class PrepareCard extends CardImpl {
 
     protected PrepareCard(final PrepareCard card) {
         super(card);
+        this.spellCard = card.getSpellCard().copy();
+        this.spellCard.setParentCard(this);
     }
 
-    public Card getSpellCard() {
+    public PrepareSpellCard getSpellCard() {
         return spellCard;
+    }
+
+    @Override
+    public void assignNewId() {
+        super.assignNewId();
+        spellCard.assignNewId();
+    }
+
+    @Override
+    public void setOwnerId(UUID ownerId) {
+        super.setOwnerId(ownerId);
+        spellCard.setOwnerId(ownerId);
     }
 }
