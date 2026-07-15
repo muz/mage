@@ -3,9 +3,9 @@
 Status: implementation in progress. Slice 1, Slice 2, the initial Slice 3 code,
 initial Slice 4 explicit cleanup, Slice 5 phasing support, the initial Slice 6/7
 prepare-characteristics resolver work, and initial Slice 9 prepare-spell stack
-metadata have been added on branch `prepare_mechanic` and statically checked;
-runtime test execution still needs a local Maven-capable run. Later slices in
-this document remain planned work until their code lands.
+metadata/color-identity support have been added on branch `prepare_mechanic`
+and statically checked; runtime test execution still needs a local Maven-capable
+run. Later slices in this document remain planned work until their code lands.
 
 This document records the rule model, current Mage code facts, corrected design
 decisions, and remaining questions for implementing the Magic: The Gathering
@@ -2169,6 +2169,12 @@ Current implementation notes:
 - Initial helper-level coverage asserts the metadata survives spell-state copy
   and stack-copy provenance. Full stack-copy gameplay coverage remains
   required before this slice is complete.
+- `ManaUtil#getColorIdentity(Card)` now has an explicit `PrepareCard` branch
+  before the `CardWithSpellOption` branch, so Commander color identity includes
+  prepare spell alternative characteristics under CR 903.4e without making
+  Prepare inherit generic spell-option playability.
+- Initial commander color-identity coverage uses a synthetic Prepare card whose
+  physical card is white and prepare spell is green.
 
 Work:
 
@@ -2191,10 +2197,11 @@ Work:
   characteristics while singleton/banned-list checks still treat the
   preparation card as one physical card.
 - Add an explicit `PrepareCard`/prepare-characteristics branch to
-  `ManaUtil#getColorIdentity(Card)`. The current code handles
-  `CardWithSpellOption`, split cards, and double-faced cards; Prepare must not
-  rely on the `CardWithSpellOption` branch because this plan deliberately keeps
-  `PrepareCard` out of that hierarchy.
+  `ManaUtil#getColorIdentity(Card)`. Initial implementation and synthetic
+  coverage added. The current code handles `CardWithSpellOption`, split cards,
+  and double-faced cards; Prepare must not rely on the `CardWithSpellOption`
+  branch because this plan deliberately keeps `PrepareCard` out of that
+  hierarchy.
 - Confirm the cast prepare copy is visible to spell-from-exile triggers and
   cost reducers but not card-from-exile or instant/sorcery-card effects.
 - Add explicit card-wording guards for live Prepare copies in exiled-card target
@@ -2231,7 +2238,8 @@ Tests:
   or sorcery prepare copy if the copied spell's type qualifies.
 - Commander color identity includes alternative prepare characteristics, but
   Commander singleton/highlander checks do not count the prepare spell name as a
-  separate card.
+  separate card. Initial color-identity coverage added; singleton/highlander
+  coverage remains required.
 - Copying a cast prepare spell on the stack preserves its "prepare spell" /
   "was cast as a prepare spell" metadata under CR 722.3d, using a synthetic
   regression if no printed card in the local data consumes that metadata.

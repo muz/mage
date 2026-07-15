@@ -1,12 +1,18 @@
 package org.mage.test.commander;
 
 import mage.cards.Card;
+import mage.cards.CardSetInfo;
+import mage.cards.PrepareCard;
 import mage.cards.repository.CardInfo;
 import mage.cards.repository.CardRepository;
+import mage.constants.CardType;
+import mage.constants.Rarity;
 import mage.filter.FilterMana;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mage.test.serverside.base.CardTestCommander3PlayersFFA;
+
+import java.util.UUID;
 
 /**
  * @author LevelX2
@@ -67,6 +73,12 @@ public class CommanderColorIdentityTest extends CardTestCommander3PlayersFFA {
 
         // Adventure cards
         Assert.assertEquals("{G}", getColorIdentityString("Rosethorn Acolyte"));
+
+        // Prepare spell alternative characteristics
+        Assert.assertEquals(
+                "{W}{G}",
+                new TestPrepareColorIdentityCard(playerA.getId()).getColorIdentity().toString()
+        );
     }
 
     private String getColorIdentityString(String cardName) {
@@ -77,5 +89,29 @@ public class CommanderColorIdentityTest extends CardTestCommander3PlayersFFA {
         Card card = cardInfo.createCard();
         FilterMana filterMana = card.getColorIdentity();
         return filterMana.toString();
+    }
+
+    private static final class TestPrepareColorIdentityCard extends PrepareCard {
+
+        private TestPrepareColorIdentityCard(UUID ownerId) {
+            super(
+                    ownerId,
+                    new CardSetInfo("Test Prepare Color Identity", "TST", "1", Rarity.RARE),
+                    new CardType[]{CardType.CREATURE},
+                    "{1}{W}",
+                    "Green Prepare Spell",
+                    new CardType[]{CardType.SORCERY},
+                    "{G}"
+            );
+        }
+
+        private TestPrepareColorIdentityCard(final TestPrepareColorIdentityCard card) {
+            super(card);
+        }
+
+        @Override
+        public TestPrepareColorIdentityCard copy() {
+            return new TestPrepareColorIdentityCard(this);
+        }
     }
 }

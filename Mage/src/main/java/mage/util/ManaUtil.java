@@ -641,6 +641,9 @@ public final class ManaUtil {
         Card secondSide;
         if (card instanceof SplitCard) {
             secondSide = ((SplitCard) card).getRightHalfCard();
+        } else if (card instanceof PrepareCard) {
+            // CR 903.4e / 722.2b: Commander color identity includes prepare spell alternative characteristics.
+            secondSide = ((PrepareCard) card).getSpellCard();
         } else if (card instanceof CardWithSpellOption) {
             secondSide = ((CardWithSpellOption) card).getSpellCard();
         } else if (card instanceof DoubleFacedCard) {
