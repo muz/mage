@@ -1,7 +1,7 @@
 # Prepare Mechanic Implementation Plan
 
 Status: implementation in progress. Slice 1, Slice 2, the initial Slice 3 code,
-and initial Slice 4 source-leaves cleanup have been added on branch
+and initial Slice 4 explicit cleanup have been added on branch
 `prepare_mechanic` and statically checked; runtime test execution still needs a
 local Maven-capable run. Later slices in this document remain planned work until
 their code lands.
@@ -1836,6 +1836,8 @@ Current implementation notes:
 - Initial test coverage covers a prepared `Elite Interceptor` being returned to
   hand by `Unsummon` before `Rejoinder` is cast. It asserts tracking and exile
   cleanup.
+- Initial helper-level coverage also verifies explicit unprepare removes the
+  exiled copy, copied-card registration, and `PrepareCopyInfo`.
 - Rollback/bookmark-specific assertions, explicit control-change tests, and
   simulation mutation checks remain to be implemented.
 
@@ -1865,7 +1867,9 @@ Work:
 
 Tests:
 
-- Unpreparing removes the exiled copy and permission effect.
+- Unpreparing removes the exiled copy and permission effect. Initial coverage
+  added for the copy/tracking cleanup path; direct permission-effect removal
+  still needs runtime-oriented coverage.
 - Source leaves the battlefield before the copy is cast: copy is removed or at
   least uncastable immediately, then physically cleaned up. Initial coverage
   added for the ordinary zone-change path.

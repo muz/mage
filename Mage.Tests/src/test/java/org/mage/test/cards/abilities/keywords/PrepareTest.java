@@ -182,6 +182,32 @@ public class PrepareTest extends CardTestPlayerBase {
         assertExileCount(playerA, "Rejoinder", 0);
     }
 
+    @Test
+    public void testUnprepareRemovesTrackedExiledCopy() {
+        setStrictChooseMode(true);
+
+        addCard(Zone.BATTLEFIELD, playerA, "Plains");
+        addCard(Zone.HAND, playerA, "Elite Interceptor");
+
+        castSpell(1, PhaseStep.PRECOMBAT_MAIN, playerA, "Elite Interceptor");
+
+        setStopAt(1, PhaseStep.BEGIN_COMBAT);
+        execute();
+
+        Permanent permanent = getPermanent("Elite Interceptor", playerA);
+        PrepareCopyInfo info = getOnlyPrepareCopyInfo();
+        UUID copyId = info.getCopyId();
+        Ability sourceAbility = permanent.getAbilities().iterator().next();
+
+        Assert.assertTrue("unprepare effect should resolve", PrepareUtil.setPrepared(permanent, false, sourceAbility, currentGame));
+
+        Assert.assertFalse("source permanent must lose prepared", permanent.isPrepared());
+        Assert.assertEquals("unprepare must clear Prepare tracking", 0, currentGame.getState().getPrepareCopyInfos().size());
+        Assert.assertNull("unprepare must remove copied-card registration", currentGame.getState().getCopiedCard(copyId));
+        Assert.assertEquals("unprepare must put the copy outside the game", Zone.OUTSIDE, currentGame.getState().getZone(copyId));
+        assertExileCount(playerA, "Rejoinder", 0);
+    }
+
     private PrepareCard createPrepareCard(String cardName) {
         CardInfo cardInfo = CardRepository.instance.findCard(cardName);
         Assert.assertNotNull("test fixture must exist: " + cardName, cardInfo);
