@@ -1045,6 +1045,8 @@ public class GameState implements Serializable, Copyable<GameState> {
 
     public void handleEvent(GameEvent event, Game game) {
         watchers.watch(event, game);
+        // CR 722.3c / 601.2i: consume Prepare before same-event cast triggers inspect game state.
+        PrepareUtil.consumePrepareSpellCast(event, game);
         delayed.checkTriggers(event, game);
         triggers.checkTriggers(event, game);
     }

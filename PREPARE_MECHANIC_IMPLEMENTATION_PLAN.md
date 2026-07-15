@@ -1,9 +1,9 @@
 # Prepare Mechanic Implementation Plan
 
-Status: implementation in progress. Slice 1 and Slice 2 code have been added on
-branch `prepare_mechanic` and statically checked; runtime test execution still
-needs a local Maven-capable run. Later slices in this document remain planned
-work until their code lands.
+Status: implementation in progress. Slice 1, Slice 2, and the initial Slice 3
+code have been added on branch `prepare_mechanic` and statically checked;
+runtime test execution still needs a local Maven-capable run. Later slices in
+this document remain planned work until their code lands.
 
 This document records the rule model, current Mage code facts, corrected design
 decisions, and remaining questions for implementing the Magic: The Gathering
@@ -1703,6 +1703,32 @@ Goal: allow the prepared permanent's current controller to cast the linked copy
 from exile, then clear prepared at the successful-cast event without removing
 the spell from the stack.
 
+Current implementation notes:
+
+- `PrepareCastFromExileEffect` lives under
+  `mage.abilities.effects.common.asthought` and is keyed by the source
+  permanent `MageObjectReference` plus the current prepare-copy id.
+- Permission uses `CAST_FROM_NOT_OWN_HAND_ZONE` with `Duration.Custom`.
+- The effect validates against `PrepareCopyInfo`, copied-card registration, the
+  real exile zone, source permanent object identity, prepared marker,
+  phased-in status, and the source permanent's current controller.
+- `applies(...)` does not prompt, edit zones, edit `PrepareCopyInfo`, or write
+  alternate-cost state. It only validates and self-discards if the tracked
+  source/copy relationship is gone.
+- Because `GameImpl#addEffect` copies effects and assigns a fresh effect id,
+  `PrepareUtil` records the registered permission effect id by scanning for the
+  matching prepare-copy id after registration. Cleanup discards all matching
+  permission effects, not only the first match.
+- Successful-cast consumption is a central `GameState#handleEvent` hook on
+  `SPELL_CAST`, immediately after ordinary watchers and before delayed/normal
+  triggers. It uses `event.getSourceId()` as the prepare-copy id.
+- The consumption path deliberately does not call the live-exile predicate,
+  because by `SPELL_CAST` the copied card has already moved from exile to the
+  stack. It clears the source permanent's prepared marker and tracking without
+  removing the copied card from `copiedCards` or the stack.
+- This slice currently has static verification only in this session. Runtime
+  `PrepareTest` execution remains required.
+
 Work:
 
 - Add `PrepareCastFromExileEffect` using
@@ -1742,7 +1768,8 @@ Work:
 
 Tests:
 
-- Prepared copy is playable from exile at legal timing.
+- Prepared copy is playable from exile at legal timing. Initial end-to-end
+  coverage has been added with `Elite Interceptor` / `Rejoinder`.
 - Sorcery prepare spells obey normal sorcery timing; instant prepare spells use
   instant timing.
 - "Enters prepared" establishes the live copy before the next priority window.
@@ -1755,7 +1782,8 @@ Tests:
   run through the ordinary cast pipeline.
 - A `Meddling Mage`-style prohibition naming the prepare spell's alternative
   name prevents casting the prepare copy.
-- Casting the copy resolves its spell effect.
+- Casting the copy resolves its spell effect. Initial coverage asserts the
+  target taps and the controller draws.
 - The `SPELL_CAST` event source id is the exiled copy id.
 - The `SPELL_CAST` event zone and the stack spell's `fromZone` are both
   `Zone.EXILED`.
@@ -1763,9 +1791,9 @@ Tests:
   `event.getZone()` both see the Prepare cast as a spell cast from exile.
 - Card-from-exile triggers still reject it because the stack spell's card is a
   copy.
-- Successful cast clears prepared and `PrepareCopyInfo`.
+- Successful cast clears prepared and `PrepareCopyInfo`. Initial coverage added.
 - Successful cast does not remove the copied spell from the stack before it can
-  resolve.
+  resolve. Initial coverage is indirect through spell resolution.
 - Failed/cancelled/illegal cast does not clear prepared.
 - A same-event cast trigger observes the source permanent after the prepared
   marker has been cleared, if this can be expressed in tests.
@@ -2528,12 +2556,9 @@ New or likely helper classes:
 
 - `Mage/src/main/java/mage/cards/PrepareSpellCopyCard.java`
 - `Mage/src/main/java/mage/abilities/effects/common/asthought/PrepareCastFromExileEffect.java`
-- `Mage/src/main/java/mage/util/PrepareUtil.java` or a more local prepare
-  helper package
-- `Mage/src/main/java/mage/watchers/common/PrepareSpellCastWatcher.java` or an
-  equivalent event hook
-- a serializable `PrepareCopyInfo` data holder, either nested in the helper or
-  stored near game state utilities
+- `Mage/src/main/java/mage/cards/PrepareUtil.java`
+- `Mage/src/main/java/mage/game/GameState.java` for the equivalent event hook
+- `Mage/src/main/java/mage/game/PrepareCopyInfo.java`
 
 Potential shared touch points:
 

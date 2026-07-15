@@ -134,6 +134,32 @@ public class PrepareTest extends CardTestPlayerBase {
         assertExileCount(playerA, "Rejoinder", 1);
     }
 
+    @Test
+    public void testCastingPrepareCopyFromExileConsumesPreparedState() {
+        setStrictChooseMode(true);
+
+        addCard(Zone.BATTLEFIELD, playerA, "Plains", 3);
+        addCard(Zone.HAND, playerA, "Elite Interceptor");
+        addCard(Zone.BATTLEFIELD, playerB, "Silvercoat Lion");
+        addCard(Zone.LIBRARY, playerA, "Island");
+
+        castSpell(1, PhaseStep.PRECOMBAT_MAIN, playerA, "Elite Interceptor", true);
+        checkPlayableAbility("prepare copy is castable from exile", 1, PhaseStep.PRECOMBAT_MAIN, playerA, "Cast Rejoinder", true);
+        castSpell(1, PhaseStep.PRECOMBAT_MAIN, playerA, "Rejoinder", "Silvercoat Lion", true);
+        setChoice(playerA, true);
+
+        setStopAt(1, PhaseStep.BEGIN_COMBAT);
+        execute();
+
+        Permanent permanent = getPermanent("Elite Interceptor", playerA);
+
+        Assert.assertFalse("source permanent must lose prepared after casting the copy", permanent.isPrepared());
+        Assert.assertEquals("successful cast must clear Prepare tracking", 0, currentGame.getState().getPrepareCopyInfos().size());
+        assertExileCount(playerA, "Rejoinder", 0);
+        assertTapped("Silvercoat Lion", true);
+        assertHandCount(playerA, "Island", 1);
+    }
+
     private PrepareCard createPrepareCard(String cardName) {
         CardInfo cardInfo = CardRepository.instance.findCard(cardName);
         Assert.assertNotNull("test fixture must exist: " + cardName, cardInfo);
