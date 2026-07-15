@@ -2535,6 +2535,10 @@ public abstract class GameImpl implements Game {
                 }
 
                 case EXILED: {
+                    // CR 722.3c is a narrow exception to CR 704.5e for the linked Prepare copy in exile.
+                    if (state.isLivePrepareSpellCopy(copiedCard.getId(), this)) {
+                        continue;
+                    }
                     getExile().removeCard(copiedCard);
                     break;
                 }
@@ -2552,6 +2556,9 @@ public abstract class GameImpl implements Game {
         copiedCardsToRemove.forEach(card -> {
             card.setZone(Zone.OUTSIDE, this);
             this.getState().getCopiedCards().remove(card);
+            if (card instanceof PrepareSpellCopyCard) {
+                this.getState().removePrepareCopyInfoByCopyId(card.getId());
+            }
             // must keep card in game state as LKI alternative until LKI rework, so don't remove from it
             // TODO: change after LKI rework
             //this.getState().removeValue(GameState.COPIED_CARD_KEY + copiedCard.getId().toString());

@@ -3,6 +3,7 @@ package mage.abilities.effects.common;
 import mage.abilities.Ability;
 import mage.abilities.Mode;
 import mage.abilities.effects.OneShotEffect;
+import mage.cards.PrepareUtil;
 import mage.constants.Outcome;
 import mage.game.Game;
 import mage.game.permanent.Permanent;
@@ -35,8 +36,7 @@ public class BecomePreparedTargetEffect extends OneShotEffect {
         if (permanent == null) {
             return false;
         }
-        permanent.setPrepared(prepared, game);
-        return true;
+        return PrepareUtil.setPrepared(permanent, prepared, source, game);
     }
 
     @Override

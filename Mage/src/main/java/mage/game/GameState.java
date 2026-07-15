@@ -106,6 +106,7 @@ public class GameState implements Serializable, Copyable<GameState> {
     private Map<UUID, MageObjectAttribute> mageObjectAttribute = new HashMap<>();
     private Map<UUID, Integer> zoneChangeCounter = new HashMap<>();
     private Map<UUID, Card> copiedCards = new HashMap<>();
+    private Map<MageObjectReference, PrepareCopyInfo> prepareCopyInfos = new HashMap<>();
     private int permanentOrderNumber;
     private final Map<UUID, FilterCreaturePermanent> usePowerInsteadOfToughnessForDamageLethalityFilters = new HashMap<>();
     private Set<MageObjectReference> commandersToStay = new HashSet<>(); // commanders that do not go back to command zone
@@ -179,7 +180,11 @@ public class GameState implements Serializable, Copyable<GameState> {
         this.permanentCostsTags = CardUtil.deepCopyObject(state.permanentCostsTags);
         this.mageObjectAttribute = CardUtil.deepCopyObject(state.mageObjectAttribute);
         this.zoneChangeCounter.putAll(state.zoneChangeCounter);
-        this.copiedCards.putAll(state.copiedCards);
+        state.copiedCards.forEach((id, card) -> this.copiedCards.put(
+                id,
+                card instanceof PrepareSpellCopyCard ? card.copy() : card
+        ));
+        state.prepareCopyInfos.forEach((key, info) -> this.prepareCopyInfos.put(key, info.copy()));
         this.permanentOrderNumber = state.permanentOrderNumber;
         this.applyEffectsCounter = state.applyEffectsCounter;
         state.usePowerInsteadOfToughnessForDamageLethalityFilters.forEach((uuid, filter)
@@ -226,6 +231,7 @@ public class GameState implements Serializable, Copyable<GameState> {
         zones.clear();
         simultaneousEvents.clear();
         copiedCards.clear();
+        prepareCopyInfos.clear();
         usePowerInsteadOfToughnessForDamageLethalityFilters.clear();
         permanentOrderNumber = 0;
     }
@@ -274,6 +280,7 @@ public class GameState implements Serializable, Copyable<GameState> {
         this.mageObjectAttribute = state.mageObjectAttribute;
         this.zoneChangeCounter = state.zoneChangeCounter;
         this.copiedCards = state.copiedCards;
+        this.prepareCopyInfos = state.prepareCopyInfos;
         this.permanentOrderNumber = state.permanentOrderNumber;
         this.applyEffectsCounter = state.applyEffectsCounter;
         state.usePowerInsteadOfToughnessForDamageLethalityFilters.forEach((uuid, filter)
@@ -1592,6 +1599,70 @@ public class GameState implements Serializable, Copyable<GameState> {
 
     public Collection<Card> getCopiedCards() {
         return copiedCards.values();
+    }
+
+    public Collection<PrepareCopyInfo> getPrepareCopyInfos() {
+        return Collections.unmodifiableCollection(prepareCopyInfos.values());
+    }
+
+    public void putPrepareCopyInfo(PrepareCopyInfo info) {
+        prepareCopyInfos.put(info.getSourcePermanentReference(), info);
+    }
+
+    public PrepareCopyInfo getPrepareCopyInfo(MageObjectReference sourcePermanentReference) {
+        return prepareCopyInfos.get(sourcePermanentReference);
+    }
+
+    public Optional<PrepareCopyInfo> findPrepareCopyInfoByCopyId(UUID copyId) {
+        return prepareCopyInfos
+                .values()
+                .stream()
+                .filter(info -> info.getCopyId().equals(copyId))
+                .findFirst();
+    }
+
+    public PrepareCopyInfo removePrepareCopyInfo(MageObjectReference sourcePermanentReference) {
+        return prepareCopyInfos.remove(sourcePermanentReference);
+    }
+
+    public PrepareCopyInfo removePrepareCopyInfoByCopyId(UUID copyId) {
+        PrepareCopyInfo info = findPrepareCopyInfoByCopyId(copyId).orElse(null);
+        if (info == null) {
+            return null;
+        }
+        return removePrepareCopyInfo(info.getSourcePermanentReference());
+    }
+
+    public Card removePrepareSpellCopy(UUID copyId) {
+        return copiedCards.remove(copyId);
+    }
+
+    public void registerPrepareSpellCopy(PrepareSpellCopyCard copyCard, PrepareCopyInfo info) {
+        if (!copyCard.getId().equals(info.getCopyId())) {
+            throw new IllegalArgumentException("Prepare copy tracking id does not match copied card id: " + copyCard.getIdName());
+        }
+        copiedCards.put(copyCard.getId(), copyCard);
+        // CR 722.3c: the live Prepare copy exists in exile while linked to its prepared permanent.
+        addCard(copyCard, Zone.EXILED);
+        putPrepareCopyInfo(info);
+    }
+
+    public boolean isLivePrepareSpellCopy(UUID copyId, Game game) {
+        PrepareCopyInfo info = findPrepareCopyInfoByCopyId(copyId).orElse(null);
+        if (info == null || !(copiedCards.get(copyId) instanceof PrepareSpellCopyCard)) {
+            return false;
+        }
+        if (getZone(copyId) != Zone.EXILED) {
+            return false;
+        }
+        ExileZone exileZone = getExile().getExileZone(info.getExileZoneId());
+        if (exileZone == null || !exileZone.contains(copyId)) {
+            return false;
+        }
+        Permanent sourcePermanent = info.getSourcePermanentReference().getPermanent(game);
+        return sourcePermanent != null
+                && sourcePermanent.isPrepared()
+                && sourcePermanent.isPhasedIn();
     }
 
     /**

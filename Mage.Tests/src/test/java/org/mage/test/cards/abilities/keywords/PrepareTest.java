@@ -10,11 +10,17 @@ import mage.cards.PrepareUtil;
 import mage.cards.repository.CardInfo;
 import mage.cards.repository.CardRepository;
 import mage.constants.CardType;
+import mage.constants.PhaseStep;
+import mage.constants.Zone;
+import mage.game.GameState;
+import mage.game.PrepareCopyInfo;
+import mage.game.permanent.Permanent;
 import mage.game.permanent.PermanentCard;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mage.test.serverside.base.CardTestPlayerBase;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -75,6 +81,59 @@ public class PrepareTest extends CardTestPlayerBase {
         Assert.assertEquals("permanent characteristics must use prepare spell name", "Rejoinder", characteristics.get().getName());
     }
 
+    @Test
+    public void testEntersPreparedCreatesTrackedExiledCopy() {
+        setStrictChooseMode(true);
+
+        addCard(Zone.BATTLEFIELD, playerA, "Plains");
+        addCard(Zone.HAND, playerA, "Elite Interceptor");
+
+        castSpell(1, PhaseStep.PRECOMBAT_MAIN, playerA, "Elite Interceptor");
+
+        setStopAt(1, PhaseStep.BEGIN_COMBAT);
+        execute();
+
+        Permanent permanent = getPermanent("Elite Interceptor", playerA);
+        PrepareCopyInfo info = getOnlyPrepareCopyInfo();
+        Card copy = currentGame.getCard(info.getCopyId());
+
+        Assert.assertTrue("source permanent must be prepared", permanent.isPrepared());
+        Assert.assertEquals("tracking must point at the source permanent", permanent.getId(), info.getSourcePermanentId());
+        Assert.assertTrue("tracked card must be a Prepare spell copy", copy instanceof PrepareSpellCopyCard);
+        Assert.assertEquals("copy must use the prepare spell name", "Rejoinder", copy.getName());
+        Assert.assertEquals("copy must be in exile", Zone.EXILED, currentGame.getState().getZone(info.getCopyId()));
+        Assert.assertSame("copy must resolve through exile", copy, currentGame.getExile().getCard(info.getCopyId(), currentGame));
+        Assert.assertTrue("copy must be live under CR 722.3c", currentGame.getState().isLivePrepareSpellCopy(info.getCopyId(), currentGame));
+        Assert.assertNull(
+                "Prepare copies must not use the generic copied-card LKI key",
+                currentGame.getState().getValue(GameState.COPIED_CARD_KEY + info.getCopyId())
+        );
+        assertExileCount(playerA, "Rejoinder", 1);
+    }
+
+    @Test
+    public void testRepeatedPrepareDoesNotCreateSecondCopy() {
+        setStrictChooseMode(true);
+
+        addCard(Zone.BATTLEFIELD, playerA, "Plains");
+        addCard(Zone.HAND, playerA, "Elite Interceptor");
+
+        castSpell(1, PhaseStep.PRECOMBAT_MAIN, playerA, "Elite Interceptor");
+
+        setStopAt(1, PhaseStep.BEGIN_COMBAT);
+        execute();
+
+        Permanent permanent = getPermanent("Elite Interceptor", playerA);
+        PrepareCopyInfo firstInfo = getOnlyPrepareCopyInfo();
+        Ability sourceAbility = permanent.getAbilities().iterator().next();
+
+        Assert.assertTrue("repeated prepare effect should resolve", PrepareUtil.setPrepared(permanent, true, sourceAbility, currentGame));
+
+        PrepareCopyInfo secondInfo = getOnlyPrepareCopyInfo();
+        Assert.assertEquals("repeated prepare must keep the existing copy", firstInfo.getCopyId(), secondInfo.getCopyId());
+        assertExileCount(playerA, "Rejoinder", 1);
+    }
+
     private PrepareCard createPrepareCard(String cardName) {
         CardInfo cardInfo = CardRepository.instance.findCard(cardName);
         Assert.assertNotNull("test fixture must exist: " + cardName, cardInfo);
@@ -87,5 +146,11 @@ public class PrepareTest extends CardTestPlayerBase {
         for (Ability ability : card.getAbilities()) {
             Assert.assertEquals("ability source must be the expected card id: " + ability, expectedSourceId, ability.getSourceId());
         }
+    }
+
+    private PrepareCopyInfo getOnlyPrepareCopyInfo() {
+        Collection<PrepareCopyInfo> infos = currentGame.getState().getPrepareCopyInfos();
+        Assert.assertEquals("there must be exactly one tracked Prepare copy", 1, infos.size());
+        return infos.iterator().next();
     }
 }
