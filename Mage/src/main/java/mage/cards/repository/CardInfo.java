@@ -160,6 +160,9 @@ public class CardInfo {
         if (card instanceof CardWithSpellOption) {
             this.cardWithSpellOption = true;
             this.spellOptionCardName = ((CardWithSpellOption) card).getSpellCard().getName();
+        } else if (card instanceof PrepareCard) {
+            // CR 722.5: prepare spell alternative names are valid name-choice/search metadata.
+            this.spellOptionCardName = ((PrepareCard) card).getSpellCard().getName();
         }
 
         if (card instanceof DoubleFacedCard) {
@@ -193,6 +196,10 @@ public class CardInfo {
             this.setManaCosts(CardUtil.concatManaSymbols(SPLIT_MANA_SEPARATOR_FULL, manaCostLeft, manaCostRight));
         } else if (card instanceof CardWithSpellOption) {
             List<String> manaCostLeft = ((CardWithSpellOption) card).getSpellCard().getManaCostSymbols();
+            List<String> manaCostRight = card.getManaCostSymbols();
+            this.setManaCosts(CardUtil.concatManaSymbols(SPLIT_MANA_SEPARATOR_FULL, manaCostLeft, manaCostRight));
+        } else if (card instanceof PrepareCard) {
+            List<String> manaCostLeft = ((PrepareCard) card).getSpellCard().getManaCostSymbols();
             List<String> manaCostRight = card.getManaCostSymbols();
             this.setManaCosts(CardUtil.concatManaSymbols(SPLIT_MANA_SEPARATOR_FULL, manaCostLeft, manaCostRight));
         } else {

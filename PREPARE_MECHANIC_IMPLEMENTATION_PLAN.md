@@ -3,9 +3,10 @@
 Status: implementation in progress. Slice 1, Slice 2, the initial Slice 3 code,
 initial Slice 4 explicit cleanup, Slice 5 phasing support, the initial Slice 6/7
 prepare-characteristics resolver work, and initial Slice 9 prepare-spell stack
-metadata/color-identity support have been added on branch `prepare_mechanic`
-and statically checked; runtime test execution still needs a local Maven-capable
-run. Later slices in this document remain planned work until their code lands.
+metadata/color-identity/search support have been added on branch
+`prepare_mechanic` and statically checked; runtime test execution still needs a
+local Maven-capable run. Later slices in this document remain planned work until
+their code lands.
 
 This document records the rule model, current Mage code facts, corrected design
 decisions, and remaining questions for implementing the Magic: The Gathering
@@ -2175,12 +2176,23 @@ Current implementation notes:
   Prepare inherit generic spell-option playability.
 - Initial commander color-identity coverage uses a synthetic Prepare card whose
   physical card is white and prepare spell is green.
+- `CardInfo` now stores the prepare spell name in `spellOptionCardName` and
+  records split-style mana metadata with the prepare spell cost on the left and
+  physical card cost on the right, but it deliberately does not set
+  `cardWithSpellOption` for Prepare.
+- `CardTextPredicate` now includes the prepare spell name and rules text for
+  deck-editor text searches without merging prepare spell abilities into the
+  parent card.
+- Initial metadata/search coverage asserts the prepare spell name, mana cost,
+  and rules are searchable while `isCardWithSpellOption()` remains false.
 
 Work:
 
 - Add explicit Prepare branches wherever card repository metadata expects
-  spell-option names, mana costs, or rules text.
-- Add text/search coverage for prepare spell name and rules text.
+  spell-option names, mana costs, or rules text. Initial implementation and
+  coverage added for `CardInfo` and `CardTextPredicate`.
+- Add text/search coverage for prepare spell name and rules text. Initial
+  helper-level coverage added.
 - Ensure rendered rules show prepare spell name, cost, type, and rules on the
   parent card.
 - Keep card search/tutor/deck-construction metadata separate from rendered

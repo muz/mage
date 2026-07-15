@@ -3,6 +3,7 @@ package mage.filter.predicate.card;
 import mage.cards.Card;
 import mage.cards.CardWithSpellOption;
 import mage.cards.ModalDoubleFacedCard;
+import mage.cards.PrepareCard;
 import mage.cards.SplitCard;
 import mage.cards.mock.MockCard;
 import mage.constants.SubType;
@@ -76,6 +77,10 @@ public class CardTextPredicate implements Predicate<Card> {
                 fullName = input.getName() + MockCard.MODAL_DOUBLE_FACES_NAME_SEPARATOR + ((ModalDoubleFacedCard) input).getRightHalfCard().getName();
             } else if (input instanceof CardWithSpellOption) {
                 fullName = input.getName() + MockCard.CARD_WITH_SPELL_OPTION_NAME_SEPARATOR + ((CardWithSpellOption) input).getSpellCard().getName();
+            } else if (input instanceof PrepareCard) {
+                fullName = input.getName()
+                        + MockCard.CARD_WITH_SPELL_OPTION_NAME_SEPARATOR
+                        + ((PrepareCard) input).getSpellCard().getName();
             }
             if (textHasTokens(fullName, true)) {
                 return saveAndReturnUniqueFind(input);
@@ -95,6 +100,9 @@ public class CardTextPredicate implements Predicate<Card> {
             }
             if (input instanceof CardWithSpellOption) {
                 fullRules.addAll(((CardWithSpellOption) input).getSpellCard().getRules(game));
+            }
+            if (input instanceof PrepareCard) {
+                fullRules.addAll(((PrepareCard) input).getSpellCard().getRules(game));
             }
             if (textHasTokens(String.join("@", fullRules), true)) {
                 return saveAndReturnUniqueFind(input);

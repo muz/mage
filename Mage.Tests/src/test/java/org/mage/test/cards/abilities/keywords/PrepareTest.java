@@ -18,6 +18,7 @@ import mage.game.events.GameEvent;
 import mage.game.permanent.Permanent;
 import mage.game.permanent.PermanentCard;
 import mage.game.stack.Spell;
+import mage.filter.predicate.card.CardTextPredicate;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mage.test.serverside.base.CardTestPlayerBase;
@@ -133,6 +134,33 @@ public class PrepareTest extends CardTestPlayerBase {
         Spell stackCopy = new Spell(copyCard.copy(), copyCard.getSpellAbility().copy(), playerA.getId(), Zone.STACK, currentGame);
         stackCopy.setCopy(true, spell);
         Assert.assertTrue("stack copy must preserve prepare-spell metadata", stackCopy.wasPrepareSpell());
+    }
+
+    @Test
+    public void testPrepareSpellMetadataIsSearchableWithoutSpellOptionFlag() {
+        PrepareCard source = createPrepareCard("Elite Interceptor");
+        CardInfo cardInfo = new CardInfo(source);
+
+        Assert.assertFalse("Prepare must not be marked as generic spell-option metadata", cardInfo.isCardWithSpellOption());
+        Assert.assertEquals("prepare spell name must be searchable metadata", "Rejoinder", cardInfo.getSpellOptionCardName());
+        Assert.assertEquals(
+                "prepare spell mana cost should be the left metadata cost",
+                "{1}{W}",
+                String.join("", cardInfo.getManaCosts(CardInfo.ManaCostSide.LEFT))
+        );
+        Assert.assertEquals(
+                "physical card mana cost should be the right metadata cost",
+                "{W}",
+                String.join("", cardInfo.getManaCosts(CardInfo.ManaCostSide.RIGHT))
+        );
+        Assert.assertTrue(
+                "prepare spell name must match deck-editor text search",
+                new CardTextPredicate("Rejoinder", true, false, false, false).apply(source, currentGame)
+        );
+        Assert.assertTrue(
+                "prepare spell rules must match deck-editor text search",
+                new CardTextPredicate("Draw a card", false, false, true, false).apply(source, currentGame)
+        );
     }
 
     @Test
