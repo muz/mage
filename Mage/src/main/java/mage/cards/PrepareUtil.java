@@ -2,7 +2,9 @@ package mage.cards;
 
 import mage.MageObjectReference;
 import mage.abilities.Ability;
+import mage.abilities.common.SimpleStaticAbility;
 import mage.abilities.effects.AsThoughEffect;
+import mage.abilities.effects.common.InfoEffect;
 import mage.abilities.effects.common.asthought.PrepareCastFromExileEffect;
 import mage.constants.AsThoughEffectType;
 import mage.constants.Zone;
@@ -66,14 +68,20 @@ public final class PrepareUtil {
             return true;
         }
 
-        removePrepareCopy(sourcePermanentReference, game);
         permanent.setPrepared(true, game);
         if (!permanent.isPrepared()) {
             return true;
         }
 
+        createPrepareCopy(permanent, sourcePermanentReference, characteristics.get(), source, game);
+        return true;
+    }
+
+    private static void createPrepareCopy(Permanent permanent, MageObjectReference sourcePermanentReference,
+                                          PrepareSpellCharacteristics characteristics, Ability source, Game game) {
+        removePrepareCopy(sourcePermanentReference, game);
         UUID copyCreatorId = permanent.getControllerId();
-        PrepareSpellCopyCard copyCard = createPrepareSpellCopy(characteristics.get(), copyCreatorId);
+        PrepareSpellCopyCard copyCard = createPrepareSpellCopy(characteristics, copyCreatorId);
         PrepareCopyInfo info = new PrepareCopyInfo(
                 sourcePermanentReference,
                 copyCard.getId(),
@@ -84,7 +92,6 @@ public final class PrepareUtil {
         // CR 722.3c: the source permanent's controller may cast the live copy from exile.
         game.addEffect(new PrepareCastFromExileEffect(sourcePermanentReference, copyCard.getId()), source);
         recordPrepareCastPermissionEffectId(info, game);
-        return true;
     }
 
     public static boolean consumePrepareSpellCast(GameEvent event, Game game) {
@@ -137,6 +144,40 @@ public final class PrepareUtil {
         return removed;
     }
 
+    public static boolean handlePreparePhaseChange(GameEvent event, Game game) {
+        if (event == null || game == null || event.getTargetId() == null) {
+            return false;
+        }
+        if (!GameEvent.EventType.PHASED_OUT.equals(event.getType())
+                && !GameEvent.EventType.PHASED_IN.equals(event.getType())) {
+            return false;
+        }
+
+        Permanent permanent = game.getPermanent(event.getTargetId());
+        if (permanent == null) {
+            return false;
+        }
+        MageObjectReference sourcePermanentReference = new MageObjectReference(permanent, game);
+        if (GameEvent.EventType.PHASED_OUT.equals(event.getType())) {
+            // CR 722.3c: phased-out permanents are not available to keep the exile copy alive.
+            return removePrepareCopy(sourcePermanentReference, game);
+        }
+        if (!permanent.isPrepared()) {
+            return false;
+        }
+        PrepareCopyInfo existingInfo = game.getState().getPrepareCopyInfo(sourcePermanentReference);
+        if (existingInfo != null && game.getState().isLivePrepareSpellCopy(existingInfo.getCopyId(), game)) {
+            return false;
+        }
+        Optional<PrepareSpellCharacteristics> characteristics = getPrepareSpellCharacteristics(permanent, game);
+        if (!characteristics.isPresent()) {
+            return false;
+        }
+        // CR 722.3c: when a prepared permanent phases in, its controller creates a fresh copy.
+        createPrepareCopy(permanent, sourcePermanentReference, characteristics.get(), createPreparePermissionSource(permanent), game);
+        return true;
+    }
+
     private static void clearPrepared(Permanent permanent, Game game) {
         MageObjectReference sourcePermanentReference = new MageObjectReference(permanent, game);
         permanent.setPrepared(false, game);
@@ -150,12 +191,13 @@ public final class PrepareUtil {
         }
     }
 
-    private static void removePrepareCopy(MageObjectReference sourcePermanentReference, Game game) {
+    private static boolean removePrepareCopy(MageObjectReference sourcePermanentReference, Game game) {
         PrepareCopyInfo info = game.getState().removePrepareCopyInfo(sourcePermanentReference);
         if (info == null) {
-            return;
+            return false;
         }
         removePrepareCopy(info, game);
+        return true;
     }
 
     private static void removePrepareCopy(PrepareCopyInfo info, Game game) {
@@ -198,5 +240,12 @@ public final class PrepareUtil {
                 .filter(effect -> effect instanceof PrepareCastFromExileEffect)
                 .filter(effect -> ((PrepareCastFromExileEffect) effect).getCopyId().equals(copyId))
                 .collect(Collectors.toList());
+    }
+
+    private static Ability createPreparePermissionSource(Permanent permanent) {
+        Ability source = new SimpleStaticAbility(Zone.ALL, new InfoEffect(""));
+        source.setSourceId(permanent.getId());
+        source.setControllerId(permanent.getControllerId());
+        return source;
     }
 }

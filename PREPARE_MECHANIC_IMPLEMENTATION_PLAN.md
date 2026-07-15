@@ -1,10 +1,10 @@
 # Prepare Mechanic Implementation Plan
 
 Status: implementation in progress. Slice 1, Slice 2, the initial Slice 3 code,
-and initial Slice 4 explicit cleanup have been added on branch
-`prepare_mechanic` and statically checked; runtime test execution still needs a
-local Maven-capable run. Later slices in this document remain planned work until
-their code lands.
+initial Slice 4 explicit cleanup, and Slice 5 phasing support have been added
+on branch `prepare_mechanic` and statically checked; runtime test execution
+still needs a local Maven-capable run. Later slices in this document remain
+planned work until their code lands.
 
 This document records the rule model, current Mage code facts, corrected design
 decisions, and remaining questions for implementing the Magic: The Gathering
@@ -1910,6 +1910,32 @@ Do not include yet:
 Goal: implement the CR 722.3c phase-out/phase-in lifecycle without clearing the
 prepared marker on phase-out.
 
+Current implementation notes:
+
+- `PrepareUtil.handlePreparePhaseChange(...)` is called from
+  `GameState#handleEvent` after successful-cast and zone-change cleanup, before
+  delayed/normal triggers.
+- `PHASED_OUT` resolves the phased source permanent, removes the linked
+  prepare copy and permission state, and deliberately leaves the permanent's
+  prepared marker intact.
+- `PHASED_IN` resolves the phased-in source permanent, checks that it is still
+  prepared, resolves current prepare spell characteristics, and creates a fresh
+  copy through the same one-live-copy helper used by normal prepare.
+- Duplicate `PHASED_IN` handling is a no-op if a valid live copy is already
+  tracked for the source, so duplicate events cannot churn or multiply copies.
+- `PermanentImpl#phaseOut(...)` fires `PHASED_OUT` immediately after setting
+  `phasedIn` to false; `PermanentImpl#phaseIn(...)` queues `PHASED_IN` as a
+  simultaneous event after setting `phasedIn` to true.
+- `PrepareCastFromExileEffect` already rejects phased-out source permanents via
+  `sourcePermanent.isPhasedIn()`, so any missed cleanup still leaves the copy
+  uncastable.
+- The phase-in path uses a synthetic static source ability only to register the
+  custom-duration cast permission effect after the original prepare source
+  ability is no longer on the event. The ability is sourced to the permanent id
+  and controlled by the permanent's current controller.
+- This slice currently has static verification only in this session. Runtime
+  `PrepareTest` execution remains required.
+
 Work:
 
 - Add a `PHASED_OUT` watcher or equivalent hook that removes the live exiled
@@ -1925,9 +1951,13 @@ Work:
 Tests:
 
 - Prepared permanent phases out: prepared marker remains, live copy disappears
-  or becomes uncastable and is cleaned up.
-- Prepared permanent phases in: fresh copy is created with a new id.
-- Duplicate `PHASED_IN` handling cannot create multiple live copies.
+  or becomes uncastable and is cleaned up. Initial coverage asserts
+  `PrepareCopyInfo` removal, copied-card registration removal, `Zone.OUTSIDE`
+  state for the old copy id, and zero exile visibility.
+- Prepared permanent phases in: fresh copy is created with a new id. Initial
+  coverage added.
+- Duplicate `PHASED_IN` handling cannot create multiple live copies or replace
+  the already-created fresh copy. Initial coverage added.
 - If phase-in cannot resolve current prepare spell characteristics, no fresh
   copy is created and no stale previous copy returns.
 

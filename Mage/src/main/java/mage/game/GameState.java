@@ -1049,6 +1049,8 @@ public class GameState implements Serializable, Copyable<GameState> {
         PrepareUtil.consumePrepareSpellCast(event, game);
         // CR 722.3c: a Prepare copy stops existing when its source leaves the battlefield.
         PrepareUtil.handlePrepareZoneChange(event, game);
+        // CR 722.3c: phasing out removes the copy; phasing in prepared creates a fresh one.
+        PrepareUtil.handlePreparePhaseChange(event, game);
         delayed.checkTriggers(event, game);
         triggers.checkTriggers(event, game);
     }

@@ -14,6 +14,7 @@ import mage.constants.PhaseStep;
 import mage.constants.Zone;
 import mage.game.GameState;
 import mage.game.PrepareCopyInfo;
+import mage.game.events.GameEvent;
 import mage.game.permanent.Permanent;
 import mage.game.permanent.PermanentCard;
 import org.junit.Assert;
@@ -230,6 +231,53 @@ public class PrepareTest extends CardTestPlayerBase {
 
         setStopAt(2, PhaseStep.BEGIN_COMBAT);
         execute();
+    }
+
+    @Test
+    public void testPhasingRemovesAndRecreatesPrepareCopy() {
+        setStrictChooseMode(true);
+
+        addCard(Zone.BATTLEFIELD, playerA, "Plains");
+        addCard(Zone.HAND, playerA, "Elite Interceptor");
+
+        castSpell(1, PhaseStep.PRECOMBAT_MAIN, playerA, "Elite Interceptor");
+
+        setStopAt(1, PhaseStep.BEGIN_COMBAT);
+        execute();
+
+        Permanent permanent = getPermanent("Elite Interceptor", playerA);
+        UUID firstCopyId = getOnlyPrepareCopyInfo().getCopyId();
+
+        Assert.assertTrue("prepared source should phase out", permanent.phaseOut(currentGame));
+        Assert.assertTrue("phased-out source must keep prepared marker", permanent.isPrepared());
+        Assert.assertFalse("source must be phased out", permanent.isPhasedIn());
+        Assert.assertEquals("phase-out must remove Prepare tracking", 0, currentGame.getState().getPrepareCopyInfos().size());
+        Assert.assertNull("phase-out must remove old copied-card registration", currentGame.getState().getCopiedCard(firstCopyId));
+        Assert.assertEquals("phase-out must put the old copy outside the game", Zone.OUTSIDE, currentGame.getState().getZone(firstCopyId));
+        assertExileCount(playerA, "Rejoinder", 0);
+
+        Assert.assertTrue("prepared source should phase in", permanent.phaseIn(currentGame));
+        currentGame.getState().handleSimultaneousEvent(currentGame);
+
+        PrepareCopyInfo secondInfo = getOnlyPrepareCopyInfo();
+        Assert.assertTrue("phased-in source must remain prepared", permanent.isPrepared());
+        Assert.assertTrue("source must be phased in", permanent.isPhasedIn());
+        Assert.assertNotEquals("phase-in must create a fresh copy id", firstCopyId, secondInfo.getCopyId());
+        assertExileCount(playerA, "Rejoinder", 1);
+
+        currentGame.fireEvent(GameEvent.getEvent(
+                GameEvent.EventType.PHASED_IN,
+                permanent.getId(),
+                null,
+                permanent.getControllerId()
+        ));
+        PrepareCopyInfo duplicatePhaseInInfo = getOnlyPrepareCopyInfo();
+        Assert.assertEquals(
+                "duplicate phase-in handling must not replace the live copy",
+                secondInfo.getCopyId(),
+                duplicatePhaseInInfo.getCopyId()
+        );
+        assertExileCount(playerA, "Rejoinder", 1);
     }
 
     private PrepareCard createPrepareCard(String cardName) {
