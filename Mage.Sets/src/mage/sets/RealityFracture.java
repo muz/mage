@@ -1,8 +1,5 @@
 package mage.sets;
 
-import java.util.Arrays;
-import java.util.List;
-
 import mage.cards.ExpansionSet;
 import mage.constants.Rarity;
 import mage.constants.SetType;
@@ -12,7 +9,6 @@ import mage.constants.SetType;
  */
 public final class RealityFracture extends ExpansionSet {
 
-    private static final List<String> unfinished = Arrays.asList("Bloodline Recollector");
     private static final RealityFracture instance = new RealityFracture();
 
     public static RealityFracture getInstance() {
@@ -34,6 +30,5 @@ public final class RealityFracture extends ExpansionSet {
         cards.add(new SetCardInfo("Stingcaster Mage", 329, Rarity.MYTHIC, mage.cards.s.StingcasterMage.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Stingcaster Mage", 457, Rarity.MYTHIC, mage.cards.s.StingcasterMage.class, NON_FULL_USE_VARIOUS));
 
-        cards.removeIf(setCardInfo -> unfinished.contains(setCardInfo.getName()));
     }
 }
