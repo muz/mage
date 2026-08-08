@@ -1,4 +1,5 @@
 Usage:
+add-new-set.py - generates the java class for adding a new MTG set
 gen-card.pl - enter the card name when prompted to generate the java classes
 gen-existing-cards-by-set.pl - generates the java clases for the cards from the set of your choice that already have an implementation
 gen-simple-cards-by-set.pl - generates the java clases for the cards from the set of your choice that can be completly generated

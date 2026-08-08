@@ -1,0 +1,22 @@
+package mage.sets;
+
+import mage.cards.ExpansionSet;
+import mage.constants.SetType;
+
+/**
+ * @author $AUTHOR
+ */
+public final class $CLASSNAME extends ExpansionSet {
+
+    private static final $CLASSNAME instance = new $CLASSNAME();
+
+    public static $CLASSNAME getInstance() {
+        return instance;
+    }
+
+    private $CLASSNAME() {
+        super("$SETNAME", "$SETCODE", ExpansionSet.buildDate($YEAR, $MONTH, $DAY), SetType.$SETTYPE);
+        this.blockName = "$SETNAME"; // for sorting in GUI
+
+    }
+}
