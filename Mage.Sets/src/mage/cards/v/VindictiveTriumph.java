@@ -1,0 +1,86 @@
+package mage.cards.v;
+
+import mage.abilities.Ability;
+import mage.abilities.common.delayed.AtTheBeginOfNextEndStepDelayedTriggeredAbility;
+import mage.abilities.effects.OneShotEffect;
+import mage.abilities.effects.common.ExileTargetEffect;
+import mage.cards.Card;
+import mage.cards.CardImpl;
+import mage.cards.CardSetInfo;
+import mage.constants.CardType;
+import mage.constants.Outcome;
+import mage.constants.Zone;
+import mage.game.Game;
+import mage.game.permanent.Permanent;
+import mage.players.Player;
+import mage.target.common.TargetCreatureOrPlaneswalker;
+import mage.target.targetpointer.FixedTarget;
+
+import java.util.UUID;
+
+/**
+ * @author muz
+ */
+public final class VindictiveTriumph extends CardImpl {
+
+    public VindictiveTriumph(UUID ownerId, CardSetInfo setInfo) {
+        super(ownerId, setInfo, new CardType[]{CardType.INSTANT}, "{W}{B}{B}");
+
+        // Exile target creature or planeswalker. If that permanent's mana value was 3 or less, return it to the battlefield tapped under your control. Exile it at the beginning of the next end step.
+        this.getSpellAbility().addEffect(new VindictiveTriumphEffect());
+        this.getSpellAbility().addTarget(new TargetCreatureOrPlaneswalker());
+    }
+
+    private VindictiveTriumph(final VindictiveTriumph card) {
+        super(card);
+    }
+
+    @Override
+    public VindictiveTriumph copy() {
+        return new VindictiveTriumph(this);
+    }
+}
+
+class VindictiveTriumphEffect extends OneShotEffect {
+
+    VindictiveTriumphEffect() {
+        super(Outcome.Exile);
+        staticText = "exile target creature or planeswalker. If that permanent's mana value was 3 or less, "
+                + "return it to the battlefield tapped under your control. Exile it at the beginning of the next end step";
+    }
+
+    private VindictiveTriumphEffect(final VindictiveTriumphEffect effect) {
+        super(effect);
+    }
+
+    @Override
+    public VindictiveTriumphEffect copy() {
+        return new VindictiveTriumphEffect(this);
+    }
+
+    @Override
+    public boolean apply(Game game, Ability source) {
+        Player player = game.getPlayer(source.getControllerId());
+        Permanent permanent = game.getPermanent(getTargetPointer().getFirst(game, source));
+        if (player == null || permanent == null) {
+            return false;
+        }
+        int manaValue = permanent.getManaValue();
+        boolean token = permanent.isToken();
+        if (!permanent.moveToExile(null, "", source, game)) {
+            return false;
+        }
+        Card card = game.getCard(permanent.getId());
+        if (manaValue > 3 || token || card == null || game.getState().getZone(card.getId()) != Zone.EXILED) {
+            return true;
+        }
+        player.moveCards(card, Zone.BATTLEFIELD, source, game, true, false, false, null);
+        Permanent returned = game.getPermanent(card.getId());
+        if (returned != null) {
+            game.addDelayedTriggeredAbility(new AtTheBeginOfNextEndStepDelayedTriggeredAbility(
+                    new ExileTargetEffect("exile it").setTargetPointer(new FixedTarget(returned, game))
+            ), source);
+        }
+        return true;
+    }
+}
