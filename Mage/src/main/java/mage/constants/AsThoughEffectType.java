@@ -28,7 +28,6 @@ public enum AsThoughEffectType {
     BLOCK_FORESTWALK,
     //
     DAMAGE_NOT_BLOCKED,
-    KEEP_ZERO_LOYALTY_PLANESWALKER,
     //
     // PLAY_FROM_NOT_OWN_HAND_ZONE + CAST_AS_INSTANT:
     // 1. Do not use dialogs in "applies" method for that type of effect (it calls multiple times and will freeze the game)
@@ -45,6 +44,7 @@ public enum AsThoughEffectType {
     //
     SHROUD,
     HEXPROOF,
+    KEEP_ZERO_LOYALTY_PLANESWALKER,
     //
     PAY_0_ECHO(true, false),
     LOOK_AT_FACE_DOWN,
