@@ -4,9 +4,10 @@ import mage.abilities.Ability;
 import mage.abilities.common.delayed.AtTheBeginOfNextEndStepDelayedTriggeredAbility;
 import mage.abilities.effects.OneShotEffect;
 import mage.abilities.effects.common.ExileTargetEffect;
-import mage.cards.Card;
 import mage.cards.CardImpl;
 import mage.cards.CardSetInfo;
+import mage.cards.Cards;
+import mage.cards.CardsImpl;
 import mage.constants.CardType;
 import mage.constants.Outcome;
 import mage.constants.Zone;
@@ -14,9 +15,13 @@ import mage.game.Game;
 import mage.game.permanent.Permanent;
 import mage.players.Player;
 import mage.target.common.TargetCreatureOrPlaneswalker;
-import mage.target.targetpointer.FixedTarget;
+import mage.target.targetpointer.FixedTargets;
+import mage.util.CardUtil;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author muz
@@ -66,19 +71,26 @@ class VindictiveTriumphEffect extends OneShotEffect {
             return false;
         }
         int manaValue = permanent.getManaValue();
-        boolean token = permanent.isToken();
-        if (!permanent.moveToExile(null, "", source, game)) {
+        Cards toReturn = new CardsImpl(CardUtil.getAllCardsFromPermanentLeftBattlefield(permanent, game));
+        if (permanent.isToken()) {
+            toReturn.remove(permanent.getId());
+        }
+        if (!player.moveCards(permanent, Zone.EXILED, source, game)) {
             return false;
         }
-        Card card = game.getCard(permanent.getId());
-        if (manaValue > 3 || token || card == null || game.getState().getZone(card.getId()) != Zone.EXILED) {
+        game.processAction();
+        toReturn.retainZone(Zone.EXILED, game);
+        if (manaValue > 3 || toReturn.isEmpty()) {
             return true;
         }
-        player.moveCards(card, Zone.BATTLEFIELD, source, game, true, false, false, null);
-        Permanent returned = game.getPermanent(card.getId());
-        if (returned != null) {
+        player.moveCards(toReturn, Zone.BATTLEFIELD, source, game, true, false, false, null);
+        List<Permanent> returned = toReturn.getCards(game).stream()
+                .map(card -> CardUtil.getPermanentFromCardPutToBattlefield(card, game))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        if (!returned.isEmpty()) {
             game.addDelayedTriggeredAbility(new AtTheBeginOfNextEndStepDelayedTriggeredAbility(
-                    new ExileTargetEffect("exile it").setTargetPointer(new FixedTarget(returned, game))
+                    new ExileTargetEffect("exile it").setTargetPointer(new FixedTargets(returned, game))
             ), source);
         }
         return true;
