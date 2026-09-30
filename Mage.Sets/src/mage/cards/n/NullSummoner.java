@@ -31,6 +31,8 @@ import mage.target.TargetCard;
 import mage.target.common.TargetOpponent;
 import mage.util.CardUtil;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -66,17 +68,18 @@ public final class NullSummoner extends CardImpl {
             return false;
         }
         Object value = game.getState().getValue(linkKey(permanent.getId(), permanent.getZoneChangeCounter(game)));
-        if (!(value instanceof MageObjectReference)) {
+        if (!(value instanceof Set)) {
             return false;
         }
-        MageObjectReference reference = (MageObjectReference) value;
+        Set<MageObjectReference> references = (Set<MageObjectReference>) value;
         Card card = game.getCard(CardUtil.getMainCardId(game, objectId));
         if (card == null) {
             return false;
         }
         Zone zone = game.getState().getZone(card.getId());
-        return zone == Zone.EXILED && reference.refersTo(card, game)
-                || allowStack && zone == Zone.STACK && reference.refersTo(card, game, 1);
+        return references.stream().anyMatch(reference ->
+                zone == Zone.EXILED && reference.refersTo(card, game)
+                        || allowStack && zone == Zone.STACK && reference.refersTo(card, game, 1));
     }
 
     private NullSummoner(final NullSummoner card) {
@@ -122,8 +125,12 @@ class NullSummonerExileEffect extends OneShotEffect {
         UUID exileId = CardUtil.getExileZoneId(game, source.getSourceId(), source.getStackMomentSourceZCC());
         if (card != null && player.moveCardsToExile(card, source, game, true, exileId, "Null Summoner")
                 && game.getState().getZone(card.getId()) == Zone.EXILED) {
-            game.getState().setValue(NullSummoner.linkKey(source.getSourceId(), source.getStackMomentSourceZCC()),
-                    new MageObjectReference(card, game));
+            String key = NullSummoner.linkKey(source.getSourceId(), source.getStackMomentSourceZCC());
+            Object value = game.getState().getValue(key);
+            Set<MageObjectReference> references = value instanceof Set
+                    ? new HashSet<>((Set<MageObjectReference>) value) : new HashSet<>();
+            references.add(new MageObjectReference(card, game));
+            game.getState().setValue(key, references);
         }
         return true;
     }
