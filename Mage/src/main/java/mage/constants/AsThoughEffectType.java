@@ -28,6 +28,7 @@ public enum AsThoughEffectType {
     BLOCK_FORESTWALK,
     //
     DAMAGE_NOT_BLOCKED,
+    COMBAT_DAMAGE_WITH_POSITIVE_POWER,
     //
     // PLAY_FROM_NOT_OWN_HAND_ZONE + CAST_AS_INSTANT:
     // 1. Do not use dialogs in "applies" method for that type of effect (it calls multiple times and will freeze the game)
