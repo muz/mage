@@ -855,7 +855,7 @@ public abstract class PlayerImpl implements Player, Serializable {
     @Override
     public Cards discard(int amount, boolean random, boolean payForCost, Ability source, Game game) {
         if (random) {
-            return discard(getRandomToDiscard(amount, source, game), payForCost, source, game);
+            return discardInner(getRandomToDiscard(amount, source, game), payForCost, true, source, game);
         }
         return discard(amount, amount, payForCost, source, game);
     }
@@ -867,6 +867,10 @@ public abstract class PlayerImpl implements Player, Serializable {
 
     @Override
     public Cards discard(Cards cards, boolean payForCost, Ability source, Game game) {
+        return discardInner(cards, payForCost, false, source, game);
+    }
+
+    private Cards discardInner(Cards cards, boolean payForCost, boolean random, Ability source, Game game) {
         Cards discardedCards = new CardsImpl();
         if (cards == null) {
             return discardedCards;
@@ -877,7 +881,7 @@ public abstract class PlayerImpl implements Player, Serializable {
             }
         }
         if (!discardedCards.isEmpty()) {
-            game.fireEvent(new DiscardedCardsEvent(source, playerId, discardedCards.size(), discardedCards));
+            game.fireEvent(new DiscardedCardsEvent(source, playerId, discardedCards.size(), discardedCards, random));
         }
         return discardedCards;
     }
@@ -955,7 +959,7 @@ public abstract class PlayerImpl implements Player, Serializable {
         game.fireEvent(GameEvent.getEvent(GameEvent.EventType.DISCARDED_CARD, card.getId(), source, playerId));
 
         if (fireFinalEvent) {
-            game.fireEvent(new DiscardedCardsEvent(source, playerId, 1, new CardsImpl(card)));
+            game.fireEvent(new DiscardedCardsEvent(source, playerId, 1, new CardsImpl(card), false));
         }
         return true;
     }
