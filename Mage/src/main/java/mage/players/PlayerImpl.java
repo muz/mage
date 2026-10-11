@@ -3214,6 +3214,9 @@ public abstract class PlayerImpl implements Player, Serializable {
             game.fireEvent(event.createFlippedEvent());
             results.add(event.isWinnable() ? event.getResult() == event.getChosen() : event.getResult());
         }
+        if (!results.isEmpty()) {
+            game.fireEvent(new GameEvent(GameEvent.EventType.COINS_FLIPPED, null, source, playerId, results.size(), false));
+        }
         return results;
     }
 

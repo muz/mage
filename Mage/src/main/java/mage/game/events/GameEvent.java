@@ -436,6 +436,7 @@ public class GameEvent implements Serializable {
         PROLIFERATE, PROLIFERATED,
         FATESEALED,
         FLIP_COIN, FLIP_COINS, COIN_FLIPPED,
+        COINS_FLIPPED, // fired once after a whole batch of flips (playerId = flipper, amount = flips made)
         REPLACE_ROLLED_DIE, // for Clam-I-Am workaround only
         ROLL_DIE, DIE_ROLLED,
         ROLL_DICE, DICE_ROLLED,
