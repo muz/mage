@@ -335,6 +335,18 @@ public class GameEvent implements Serializable {
          amount      not used for this event
          */
         TARGET, TARGETED,
+        /* TARGETS_SELECTED_AT_RANDOM
+         sourceId    id of the ability's object that selected the targets
+         playerId    controller of the ability
+         amount      number of targets selected at random
+         */
+        TARGETS_SELECTED_AT_RANDOM,
+        /* MODES_CHOSEN_AT_RANDOM
+         sourceId    id of the ability's object that chose the modes
+         playerId    controller of the ability
+         amount      number of modes chosen at random
+         */
+        MODES_CHOSEN_AT_RANDOM,
         /* TARGETS_VALID
          targetId    id of the spell or id of stack ability the targets were set to
          sourceId    = targetId

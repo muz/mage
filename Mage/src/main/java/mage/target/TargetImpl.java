@@ -467,6 +467,7 @@ public abstract class TargetImpl implements Target {
 
         List<UUID> randomPossibleTargets = new ArrayList<>(possibleTargets(playerId, source, game));
 
+        int randomTargetsCount = 0;
         chosen = false;
         do {
             int prevTargetsCount = this.getTargets().size();
@@ -490,6 +491,7 @@ public abstract class TargetImpl implements Target {
                     UUID possibleTarget = RandomUtil.randomFromCollection(randomPossibleTargets);
                     if (this.canTarget(playerId, possibleTarget, source, game) && !this.contains(possibleTarget)) {
                         this.addTarget(possibleTarget, source, game);
+                        randomTargetsCount++;
                         randomPossibleTargets.remove(possibleTarget);
                         break;
                     } else {
@@ -534,6 +536,10 @@ public abstract class TargetImpl implements Target {
         } while (true);
 
         chosen = isChosen(game);
+        if (randomTargetsCount > 0 && source != null) {
+            game.fireEvent(new GameEvent(GameEvent.EventType.TARGETS_SELECTED_AT_RANDOM, null, source,
+                    source.getControllerId(), randomTargetsCount, false));
+        }
         return chosen && !this.getTargets().isEmpty();
     }
 
