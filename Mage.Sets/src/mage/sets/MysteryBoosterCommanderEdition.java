@@ -31,6 +31,7 @@ public final class MysteryBoosterCommanderEdition extends ExpansionSet {
         cards.add(new SetCardInfo("Case of the Lost Witness", 62, Rarity.UNCOMMON, mage.cards.c.CaseOfTheLostWitness.class));
         cards.add(new SetCardInfo("Chaos Warp", 72, Rarity.RARE, mage.cards.c.ChaosWarp.class));
         cards.add(new SetCardInfo("Chief Magistrate of Mercadia", 35, Rarity.RARE, mage.cards.c.ChiefMagistrateOfMercadia.class));
+        cards.add(new SetCardInfo("Chira, All In", 21, Rarity.RARE, mage.cards.c.ChiraAllIn.class));
         cards.add(new SetCardInfo("Chromatic Lantern", 73, Rarity.RARE, mage.cards.c.ChromaticLantern.class));
         cards.add(new SetCardInfo("Davvol, Evincar of Rath", 36, Rarity.RARE, mage.cards.d.DavvolEvincarOfRath.class));
         cards.add(new SetCardInfo("Dust to Dust", 71, Rarity.UNCOMMON, mage.cards.d.DustToDust.class));
