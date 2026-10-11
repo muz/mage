@@ -14,6 +14,7 @@ import mage.constants.TargetController;
 import mage.filter.Filter;
 import mage.filter.FilterPlayer;
 import mage.game.Game;
+import mage.game.events.GameEvent;
 import mage.players.Player;
 import mage.target.common.TargetOpponent;
 import mage.util.CardUtil;
@@ -400,6 +401,8 @@ public class Modes extends LinkedHashMap<UUID, Mode> implements Copyable<Modes> 
             if (this.isRandom) {
                 // TODO: research rules of Cult of Skaro after WHO release (is it random from all modes or from available/valid)
                 this.addSelectedMode(availableModes.get(RandomUtil.nextInt(availableModes.size())).getId());
+                game.fireEvent(new GameEvent(GameEvent.EventType.MODES_CHOSEN_AT_RANDOM, null, source,
+                        source.getControllerId(), 1, false));
                 return isSelectedValid(source, game);
             }
 
