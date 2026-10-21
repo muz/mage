@@ -175,6 +175,7 @@ public enum CounterType {
     PAIN("pain"),
     PALLIATION("palliation"),
     PARALYZATION("paralyzation"),
+    PEACE("peace"),
     PETAL("petal"),
     PETRIFICATION("petrification"),
     PHYLACTERY("phylactery"),
