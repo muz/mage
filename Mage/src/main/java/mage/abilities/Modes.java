@@ -53,6 +53,7 @@ public class Modes extends LinkedHashMap<UUID, Mode> implements Copyable<Modes> 
 
     private String chooseText = null;
     private TargetController chooseController;
+    private UUID choosingPlayerId;
     private boolean mayChooseSameModeMoreThanOnce = false; // example: choose three... you may choose the same mode more than once
     private boolean mayChooseNone = false;
     private boolean isRandom = false; // random from available modes, not modes TODO: research rules of Cult of Skaro after WHO release (is it random from all modes or from available/valid)
@@ -90,6 +91,7 @@ public class Modes extends LinkedHashMap<UUID, Mode> implements Copyable<Modes> 
 
         this.chooseText = modes.chooseText;
         this.chooseController = modes.chooseController;
+        this.choosingPlayerId = modes.choosingPlayerId;
         this.mayChooseSameModeMoreThanOnce = modes.mayChooseSameModeMoreThanOnce;
         this.mayChooseNone = modes.mayChooseNone;
         this.isRandom = modes.isRandom;
@@ -342,10 +344,15 @@ public class Modes extends LinkedHashMap<UUID, Mode> implements Copyable<Modes> 
                 || (this.selectedModes.size() == 0 && mayChooseNone);
     }
 
+    public UUID getChoosingPlayerId() {
+        return choosingPlayerId;
+    }
+
     public boolean choose(Game game, Ability source) {
+        this.choosingPlayerId = source.getControllerId();
         // in multi-modal abilities it must keep already selected modes and targets
         // to make sure AI simulations will keep predefined setup (modes + targets)
-        if (this.isPreselected()) {
+        if (this.isPreselected() && chooseController != TargetController.OPPONENT) {
             int selectedTargetsCount = this.values().stream()
                     .mapToInt(m -> m.getTargets().stream()
                             .mapToInt(t -> t.getTargets().size())
@@ -396,6 +403,24 @@ public class Modes extends LinkedHashMap<UUID, Mode> implements Copyable<Modes> 
                 }
             }
 
+            // 700.2d
+            // Some spells and abilities specify that a player other than their controller chooses a mode for it.
+            // In that case, the other player does so when the spell or ability's controller normally would do so.
+            // If there is more than one other player who could make such a choice, the spell or ability's controller decides which of those players will make the choice.
+            UUID playerId;
+            if (chooseController == TargetController.OPPONENT) {
+                TargetOpponent targetOpponent = new TargetOpponent();
+                targetOpponent.choose(Outcome.Benefit, source.getControllerId(), source.getSourceId(), source, game);
+                playerId = targetOpponent.getFirstTarget();
+            } else {
+                playerId = source.getControllerId();
+            }
+            this.choosingPlayerId = playerId;
+            Player player = game.getPlayer(playerId);
+            if (player == null) {
+                return false;
+            }
+
             // choose random
             if (this.isRandom) {
                 // TODO: research rules of Cult of Skaro after WHO release (is it random from all modes or from available/valid)
@@ -416,23 +441,6 @@ public class Modes extends LinkedHashMap<UUID, Mode> implements Copyable<Modes> 
                     }
                 }
                 return isSelectedValid(source, game);
-            }
-
-            // 700.2d
-            // Some spells and abilities specify that a player other than their controller chooses a mode for it.
-            // In that case, the other player does so when the spell or ability's controller normally would do so.
-            // If there is more than one other player who could make such a choice, the spell or ability's controller decides which of those players will make the choice.
-            UUID playerId;
-            if (chooseController == TargetController.OPPONENT) {
-                TargetOpponent targetOpponent = new TargetOpponent();
-                targetOpponent.choose(Outcome.Benefit, source.getControllerId(), source.getSourceId(), source, game);
-                playerId = targetOpponent.getFirstTarget();
-            } else {
-                playerId = source.getControllerId();
-            }
-            Player player = game.getPlayer(playerId);
-            if (player == null) {
-                return false;
             }
 
             // player chooses modes manually
