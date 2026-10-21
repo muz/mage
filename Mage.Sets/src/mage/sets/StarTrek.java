@@ -51,6 +51,8 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Captain Kathryn Janeway", 340, Rarity.MYTHIC, mage.cards.c.CaptainKathrynJaneway.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Captain Kathryn Janeway", 386, Rarity.MYTHIC, mage.cards.c.CaptainKathrynJaneway.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Captain Kathryn Janeway", 520, Rarity.MYTHIC, mage.cards.c.CaptainKathrynJaneway.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Captain Pike, Fullness of Time", 188, Rarity.RARE, mage.cards.c.CaptainPikeFullnessOfTime.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Captain Pike, Fullness of Time", 468, Rarity.RARE, mage.cards.c.CaptainPikeFullnessOfTime.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Captain's Tutelage", 144, Rarity.COMMON, mage.cards.c.CaptainsTutelage.class));
         cards.add(new SetCardInfo("Cardassia Prime", 280, Rarity.COMMON, mage.cards.c.CardassiaPrime.class));
         cards.add(new SetCardInfo("Cha'DIch Investigator", 572, Rarity.COMMON, mage.cards.c.ChaDIchInvestigator.class, NON_FULL_USE_VARIOUS));
