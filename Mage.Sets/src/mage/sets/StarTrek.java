@@ -130,6 +130,9 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Overgrown Tomb", 289, Rarity.RARE, mage.cards.o.OvergrownTomb.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Overgrown Tomb", 399, Rarity.RARE, mage.cards.o.OvergrownTomb.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Overgrown Tomb", 494, Rarity.RARE, mage.cards.o.OvergrownTomb.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Peace in Our Time", 27, Rarity.RARE, mage.cards.p.PeaceInOurTime.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Peace in Our Time", 367, Rarity.RARE, mage.cards.p.PeaceInOurTime.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Peace in Our Time", 501, Rarity.RARE, mage.cards.p.PeaceInOurTime.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Perils of the Past", 161, Rarity.COMMON, mage.cards.p.PerilsOfThePast.class));
         cards.add(new SetCardInfo("Picard, Leading by Example", 29, Rarity.UNCOMMON, mage.cards.p.PicardLeadingByExample.class));
         cards.add(new SetCardInfo("Plains", 307, Rarity.LAND, mage.cards.basiclands.Plains.class, FULL_ART_BFZ_VARIOUS));
