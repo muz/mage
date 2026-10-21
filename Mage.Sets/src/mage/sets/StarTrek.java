@@ -278,6 +278,9 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Pure Energy", 31, Rarity.COMMON, mage.cards.p.PureEnergy.class));
         cards.add(new SetCardInfo("Q Continuum", 290, Rarity.RARE, mage.cards.q.QContinuum.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Q Continuum", 334, Rarity.RARE, mage.cards.q.QContinuum.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Q, Stacking the Deck", 165, Rarity.MYTHIC, mage.cards.q.QStackingTheDeck.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Q, Stacking the Deck", 383, Rarity.MYTHIC, mage.cards.q.QStackingTheDeck.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Q, Stacking the Deck", 517, Rarity.MYTHIC, mage.cards.q.QStackingTheDeck.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Qo'noS", 291, Rarity.COMMON, mage.cards.q.QonoS.class));
         cards.add(new SetCardInfo("Quark's Bar", 292, Rarity.RARE, mage.cards.q.QuarksBar.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Quark's Bar", 335, Rarity.RARE, mage.cards.q.QuarksBar.class, NON_FULL_USE_VARIOUS));
