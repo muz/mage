@@ -258,6 +258,40 @@ public class Combat implements Serializable, Copyable<Combat> {
         return false;
     }
 
+    /**
+     * Put a creature into combat attacking a specified defender (for example, sneak).
+     * Unlike declaring an attacker, this ignores attack restrictions (508.4c).
+     * An absent or changed defender doesn't allow choosing another one (508.4a).
+     */
+    public boolean addAttackingCreature(UUID creatureId, MageObjectReference defenderReference, Game game) {
+        Permanent creature = game.getPermanent(creatureId);
+        if (creature == null || !creature.isCreature(game) || creature.isBattle(game)
+                || !creature.isControlledBy(attackingPlayerId)) {
+            return false;
+        }
+        UUID defenderId = defenderReference.getSourceId();
+        Permanent defender = defenderReference.getPermanent(game);
+        if (defender != null && !defender.isPhasedIn()) {
+            return false;
+        }
+        UUID defendingPlayerId;
+        if (defender != null && defender.isPlaneswalker(game)) {
+            defendingPlayerId = defender.getControllerId();
+        } else if (defender != null && defender.isBattle(game)) {
+            defendingPlayerId = defender.getProtectorId();
+        } else if (game.getPlayer(defenderId) != null) {
+            defendingPlayerId = defenderId;
+        } else {
+            return false;
+        }
+        Player defendingPlayer = game.getPlayer(defendingPlayerId);
+        if (!defenders.contains(defendingPlayerId) || defendingPlayer == null
+                || defendingPlayer.hasLeft() || defendingPlayer.hasLost()) {
+            return false;
+        }
+        return addAttackerToCombat(creatureId, defenderId, game, false);
+    }
+
     public void selectAttackers(Game game) {
         if (!game.replaceEvent(GameEvent.getEvent(GameEvent.EventType.DECLARING_ATTACKERS, attackingPlayerId, attackingPlayerId))) {
             //20101001 - 508.1d
@@ -1481,12 +1515,16 @@ public class Combat implements Serializable, Copyable<Combat> {
     }
 
     public boolean addAttackerToCombat(UUID attackerId, UUID defenderId, Game game) {
+        return addAttackerToCombat(attackerId, defenderId, game, true);
+    }
+
+    private boolean addAttackerToCombat(UUID attackerId, UUID defenderId, Game game, boolean checkAttackRestrictions) {
         if (!defenders.contains(defenderId)) {
             return false;
         }
         Permanent defender = game.getPermanent(defenderId);
         // Check if defending player can be attacked with another creature
-        if (!canDefenderBeAttacked(attackerId, defenderId, game)) {
+        if (checkAttackRestrictions && !canDefenderBeAttacked(attackerId, defenderId, game)) {
             return false;
         }
         Permanent attacker = game.getPermanent(attackerId);

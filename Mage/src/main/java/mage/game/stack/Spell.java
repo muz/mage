@@ -3,11 +3,13 @@ package mage.game.stack;
 import mage.*;
 import mage.abilities.*;
 import mage.abilities.common.SpellTransformedAbility;
+import mage.abilities.condition.common.SneakCondition;
 import mage.abilities.costs.mana.ActivationManaAbilityStep;
 import mage.abilities.costs.mana.ManaCost;
 import mage.abilities.costs.mana.ManaCosts;
 import mage.abilities.keyword.BestowAbility;
 import mage.abilities.keyword.PrototypeAbility;
+import mage.abilities.keyword.SneakAbility;
 import mage.cards.*;
 import mage.constants.*;
 import mage.counters.Counter;
@@ -342,25 +344,8 @@ public class Spell extends StackObjectImpl implements Card {
                     // Otherwise effects like evolve trigger from creature comes into play event
                     BestowAbility.becomeAura(game, card);
                 }
-                UUID permId;
-                boolean permanentCreated;
-                if (isCopy()) {
-                    Token token = CopyTokenFunction.createTokenCopy(card, game, this);
-                    // The token that a resolving copy of a spell becomes isn’t said to have been “created.” (2020-09-25)
-                    if (token.putOntoBattlefield(1, game, ability, getControllerId(), false, false, null, null, false)) {
-                        permId = token.getLastAddedTokenIds().stream().findFirst().orElse(null);
-                        permanentCreated = true;
-                    } else {
-                        permId = null;
-                        permanentCreated = false;
-                    }
-                } else {
-                    permId = card.getId();
-                    MageObjectReference mor = new MageObjectReference(getSpellAbility());
-                    game.storePermanentCostsTags(mor, getSpellAbility());
-                    permanentCreated = controller.moveCards(card, Zone.BATTLEFIELD, ability, game, false, faceDown, false, null);
-                }
-                if (permanentCreated) {
+                UUID permId = putPermanentOntoBattlefield(game, controller);
+                if (permId != null) {
                     if (bestow) {
                         Permanent permanent = game.getPermanent(permId);
                         permanent.setSpellAbility(ability); // otherwise spell ability without bestow will be set
@@ -409,17 +394,36 @@ public class Spell extends StackObjectImpl implements Card {
                     return permanentToMutate.mutate(card, this, game);
                 }
             }
-            if (isCopy()) {
-                Token token = CopyTokenFunction.createTokenCopy(card, game, this);
-                // The token that a resolving copy of a spell becomes isn’t said to have been “created.” (2020-09-25)
-                token.putOntoBattlefield(1, game, ability, getControllerId(), false, false, null, null, false);
-                return true;
-            } else {
-                MageObjectReference mor = new MageObjectReference(getSpellAbility());
-                game.storePermanentCostsTags(mor, getSpellAbility());
-                return controller.moveCards(card, Zone.BATTLEFIELD, ability, game, false, faceDown, false, null);
-            }
+            return putPermanentOntoBattlefield(game, controller) != null;
         }
+    }
+
+    private UUID putPermanentOntoBattlefield(Game game, Player controller) {
+        // Sneak's entry instruction is a rule, not an ability of the resulting permanent (702.190b).
+        boolean sneak = SneakCondition.instance.apply(game, ability);
+        UUID permanentId;
+        if (isCopy()) {
+            Token token = CopyTokenFunction.createTokenCopy(card, game, this);
+            // A resolving copy of a permanent spell becomes a token; it isn't created.
+            token.putOntoBattlefield(1, game, ability, getControllerId(), sneak, false, null, null, false);
+            permanentId = token.getLastAddedTokenIds().stream().findFirst().orElse(null);
+        } else {
+            MageObjectReference mor = new MageObjectReference(getSpellAbility());
+            game.storePermanentCostsTags(mor, getSpellAbility());
+            if (!controller.moveCards(card, Zone.BATTLEFIELD, ability, game, sneak, faceDown, false, null)) {
+                return null;
+            }
+            permanentId = card.getId();
+        }
+        if (sneak && permanentId != null) {
+            MageObjectReference defender = CardUtil.getSourceCostsTag(
+                    game, ability, SneakAbility.SNEAK_DEFENDER_VALUE_KEY, new MageObjectReference((UUID) null)
+            );
+            // Entry events are queued until resolution finishes. Assign combat now, so
+            // "enters attacking" triggers see it, without declaring another attacker.
+            game.getCombat().addAttackingCreature(permanentId, defender, game);
+        }
+        return permanentId;
     }
 
     private boolean hasTargets(SpellAbility spellAbility, Game game) {
