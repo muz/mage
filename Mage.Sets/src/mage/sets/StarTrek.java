@@ -313,6 +313,8 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Sela, Tal Shiar Paradox", 379, Rarity.RARE, mage.cards.s.SelaTalShiarParadox.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Sela, Tal Shiar Paradox", 513, Rarity.RARE, mage.cards.s.SelaTalShiarParadox.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Set Phasers to . . .", 34, Rarity.COMMON, mage.cards.s.SetPhasersTo.class));
+        cards.add(new SetCardInfo("Seven of Nine", 252, Rarity.UNCOMMON, mage.cards.s.SevenOfNine.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Seven of Nine", 343, Rarity.UNCOMMON, mage.cards.s.SevenOfNine.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Seven of Nine, Unassimilated", 1705, Rarity.MYTHIC, mage.cards.s.SevenOfNineUnassimilated.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Seven of Nine, Unassimilated", 373, Rarity.MYTHIC, mage.cards.s.SevenOfNineUnassimilated.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Seven of Nine, Unassimilated", 507, Rarity.MYTHIC, mage.cards.s.SevenOfNineUnassimilated.class, NON_FULL_USE_VARIOUS));
