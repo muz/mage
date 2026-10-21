@@ -727,6 +727,9 @@ public class GameEvent implements Serializable {
          data       id of the ability being paid for
          */
         PAY_SACRIFICE_COST,
+        // Permission check for returning a creature to pay a beam me up cost.
+        // targetId is the creature, source is the spell, playerId is the caster.
+        BEAM_UP,
         EARTHBENDED,
         AIRBENDED,
         FIREBENDED,
