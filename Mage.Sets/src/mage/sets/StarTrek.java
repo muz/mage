@@ -123,6 +123,10 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Mountain", 324, Rarity.LAND, mage.cards.basiclands.Mountain.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Mugato", 208, Rarity.UNCOMMON, mage.cards.m.Mugato.class));
         cards.add(new SetCardInfo("Munitions Enthusiast", 158, Rarity.UNCOMMON, mage.cards.m.MunitionsEnthusiast.class));
+        cards.add(new SetCardInfo("Nyota Uhura, Communications", 358, Rarity.RARE, mage.cards.n.NyotaUhuraCommunications.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Nyota Uhura, Communications", 412, Rarity.RARE, mage.cards.n.NyotaUhuraCommunications.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Nyota Uhura, Communications", 536, Rarity.RARE, mage.cards.n.NyotaUhuraCommunications.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Nyota Uhura, Communications", 75, Rarity.RARE, mage.cards.n.NyotaUhuraCommunications.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Organic Avulsion Unit", 121, Rarity.UNCOMMON, mage.cards.o.OrganicAvulsionUnit.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Organic Avulsion Unit", 376, Rarity.UNCOMMON, mage.cards.o.OrganicAvulsionUnit.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Organic Avulsion Unit", 510, Rarity.UNCOMMON, mage.cards.o.OrganicAvulsionUnit.class, NON_FULL_USE_VARIOUS));
