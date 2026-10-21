@@ -158,6 +158,8 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Shields Up!", 35, Rarity.COMMON, mage.cards.s.ShieldsUp.class));
         cards.add(new SetCardInfo("Shuttle Ace", 36, Rarity.COMMON, mage.cards.s.ShuttleAce.class));
         cards.add(new SetCardInfo("Silicate Surveyor", 172, Rarity.COMMON, mage.cards.s.SilicateSurveyor.class));
+        cards.add(new SetCardInfo("Starfleet Academy", 297, Rarity.MYTHIC, mage.cards.s.StarfleetAcademy.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Starfleet Academy", 336, Rarity.MYTHIC, mage.cards.s.StarfleetAcademy.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Steam Vents", 298, Rarity.RARE, mage.cards.s.SteamVents.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Steam Vents", 398, Rarity.RARE, mage.cards.s.SteamVents.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Steam Vents", 493, Rarity.RARE, mage.cards.s.SteamVents.class, NON_FULL_USE_VARIOUS));
