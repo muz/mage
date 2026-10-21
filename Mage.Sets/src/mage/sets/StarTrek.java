@@ -67,6 +67,8 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Cybernetic Specialist", 262, Rarity.COMMON, mage.cards.c.CyberneticSpecialist.class));
         cards.add(new SetCardInfo("DOT-7 Repair Squad", 12, Rarity.COMMON, mage.cards.d.DOT7RepairSquad.class));
         cards.add(new SetCardInfo("Dathon and Picard at El-Adrel", 192, Rarity.COMMON, mage.cards.d.DathonAndPicardAtElAdrel.class));
+        cards.add(new SetCardInfo("Dominion Saboteur", 345, Rarity.UNCOMMON, mage.cards.d.DominionSaboteur.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Dominion Saboteur", 54, Rarity.UNCOMMON, mage.cards.d.DominionSaboteur.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Dominion Supervisor", 195, Rarity.COMMON, mage.cards.d.DominionSupervisor.class));
         cards.add(new SetCardInfo("Dr. Beverly Crusher", 13, Rarity.MYTHIC, mage.cards.d.DrBeverlyCrusher.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Dr. Beverly Crusher", 366, Rarity.MYTHIC, mage.cards.d.DrBeverlyCrusher.class, NON_FULL_USE_VARIOUS));
