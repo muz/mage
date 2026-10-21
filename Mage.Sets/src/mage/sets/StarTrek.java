@@ -181,6 +181,9 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("U.S.S. Enterprise-D, Galaxy-Class", 273, Rarity.RARE, mage.cards.u.USSEnterpriseDGalaxyClass.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("U.S.S. Enterprise-D, Galaxy-Class", 481, Rarity.RARE, mage.cards.u.USSEnterpriseDGalaxyClass.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("U.S.S. Enterprise-D, Galaxy-Class", 557, Rarity.RARE, mage.cards.u.USSEnterpriseDGalaxyClass.class, FULL_ART_USE_VARIOUS));
+        cards.add(new SetCardInfo("U.S.S. Reliant, From Hell's Heart", 135, Rarity.RARE, mage.cards.u.USSReliantFromHellsHeart.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("U.S.S. Reliant, From Hell's Heart", 461, Rarity.RARE, mage.cards.u.USSReliantFromHellsHeart.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("U.S.S. Reliant, From Hell's Heart", 552, Rarity.RARE, mage.cards.u.USSReliantFromHellsHeart.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("V'Ger, the Intruder", 87, Rarity.UNCOMMON, mage.cards.v.VGerTheIntruder.class));
         cards.add(new SetCardInfo("Vulcan", 305, Rarity.COMMON, mage.cards.v.Vulcan.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Vulcan", 579, Rarity.COMMON, mage.cards.v.Vulcan.class, NON_FULL_USE_VARIOUS));
