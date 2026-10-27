@@ -1,5 +1,6 @@
 package mage.cards.e;
 
+import mage.abilities.CompoundAbility;
 import mage.abilities.effects.common.continuous.GainAbilityControlledEffect;
 import mage.abilities.keyword.HexproofAbility;
 import mage.abilities.keyword.IndestructibleAbility;
@@ -21,11 +22,9 @@ public final class EmergencyRegeneration extends CardImpl {
 
         // Artifacts you control gain hexproof and indestructible until end of turn.
         this.getSpellAbility().addEffect(new GainAbilityControlledEffect(
-            HexproofAbility.getInstance(), Duration.EndOfTurn, StaticFilters.FILTER_PERMANENT_ARTIFACTS
-        ).setText("artifacts you control gain hexproof"));
-        this.getSpellAbility().addEffect(new GainAbilityControlledEffect(
-            IndestructibleAbility.getInstance(), Duration.EndOfTurn, StaticFilters.FILTER_PERMANENT_ARTIFACTS
-        ).setText("and indestructible until end of turn"));
+            new CompoundAbility(HexproofAbility.getInstance(), IndestructibleAbility.getInstance()),
+            Duration.EndOfTurn, StaticFilters.FILTER_PERMANENT_ARTIFACTS
+        ));
     }
 
     private EmergencyRegeneration(final EmergencyRegeneration card) {
