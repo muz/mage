@@ -145,6 +145,7 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Excalbian Gamemaster", 16, Rarity.MYTHIC, mage.cards.e.ExcalbianGamemaster.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Excalbian Gamemaster", 403, Rarity.MYTHIC, mage.cards.e.ExcalbianGamemaster.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Excalbian Gamemaster", 527, Rarity.MYTHIC, mage.cards.e.ExcalbianGamemaster.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Exploratory Mission", 150, Rarity.UNCOMMON, mage.cards.e.ExploratoryMission.class));
         cards.add(new SetCardInfo("Federation Field Medic", 17, Rarity.COMMON, mage.cards.f.FederationFieldMedic.class));
         cards.add(new SetCardInfo("Federation Outpost", 282, Rarity.RARE, mage.cards.f.FederationOutpost.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Federation Outpost", 332, Rarity.RARE, mage.cards.f.FederationOutpost.class, NON_FULL_USE_VARIOUS));
