@@ -222,6 +222,8 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Locutus, the One Who Speaks", 523, Rarity.UNCOMMON, mage.cards.l.LocutusTheOneWhoSpeaks.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Locutus, the One Who Speaks", 576, Rarity.UNCOMMON, mage.cards.l.LocutusTheOneWhoSpeaks.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Lore, Positronic Provocateur", 246, Rarity.UNCOMMON, mage.cards.l.LorePositronicProvocateur.class));
+        cards.add(new SetCardInfo("Lwaxana Troi, Charming Guest", 157, Rarity.RARE, mage.cards.l.LwaxanaTroiCharmingGuest.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Lwaxana Troi, Charming Guest", 464, Rarity.RARE, mage.cards.l.LwaxanaTroiCharmingGuest.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("MACO Strike Team", 206, Rarity.RARE, mage.cards.m.MACOStrikeTeam.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("MACO Strike Team", 471, Rarity.RARE, mage.cards.m.MACOStrikeTeam.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Make It So", 71, Rarity.COMMON, mage.cards.m.MakeItSo.class));
