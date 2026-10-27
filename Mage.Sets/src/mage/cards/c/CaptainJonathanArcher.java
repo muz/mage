@@ -15,7 +15,7 @@ import mage.constants.AbilityWord;
 import mage.constants.CardType;
 import mage.constants.SubType;
 import mage.constants.SuperType;
-import mage.game.permanent.token.PorthosToken;
+import mage.game.permanent.token.TokenImpl;
 import mage.target.common.TargetControlledCreaturePermanent;
 
 import java.util.UUID;
@@ -35,7 +35,7 @@ public final class CaptainJonathanArcher extends CardImpl {
         this.toughness = new MageInt(3);
 
         // When Captain Archer enters, create Porthos, a legendary 1/1 green Dog creature token.
-        this.addAbility(new EntersBattlefieldTriggeredAbility(new CreateTokenEffect(new PorthosToken())));
+        this.addAbility(new EntersBattlefieldTriggeredAbility(new CreateTokenEffect(new CaptainJonathanArcherToken())));
 
         // Federation -- {G}, {T}: Target creature you control gets +X/+X until end of turn, where X is the number of creature types among non-Borg creatures you control. Activate only as a sorcery.
         Ability ability = new ActivateAsSorceryActivatedAbility(new BoostTargetEffect(FederationCount.instance, FederationCount.instance)
@@ -53,5 +53,27 @@ public final class CaptainJonathanArcher extends CardImpl {
     @Override
     public CaptainJonathanArcher copy() {
         return new CaptainJonathanArcher(this);
+    }
+}
+
+class CaptainJonathanArcherToken extends TokenImpl {
+
+    CaptainJonathanArcherToken() {
+        super("Porthos", "Porthos, a legendary 1/1 green Dog creature token");
+        supertype.add(SuperType.LEGENDARY);
+        cardType.add(CardType.CREATURE);
+        color.setGreen(true);
+        subtype.add(SubType.DOG);
+        power = new MageInt(1);
+        toughness = new MageInt(1);
+    }
+
+    private CaptainJonathanArcherToken(final CaptainJonathanArcherToken token) {
+        super(token);
+    }
+
+    @Override
+    public CaptainJonathanArcherToken copy() {
+        return new CaptainJonathanArcherToken(this);
     }
 }
