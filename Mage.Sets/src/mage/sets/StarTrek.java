@@ -251,6 +251,8 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Organic Avulsion Unit", 376, Rarity.UNCOMMON, mage.cards.o.OrganicAvulsionUnit.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Organic Avulsion Unit", 510, Rarity.UNCOMMON, mage.cards.o.OrganicAvulsionUnit.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Orion", 288, Rarity.COMMON, mage.cards.o.Orion.class));
+        cards.add(new SetCardInfo("Overflow Submatrix", 122, Rarity.RARE, mage.cards.o.OverflowSubmatrix.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Overflow Submatrix", 377, Rarity.RARE, mage.cards.o.OverflowSubmatrix.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Overgrown Tomb", 289, Rarity.RARE, mage.cards.o.OvergrownTomb.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Overgrown Tomb", 399, Rarity.RARE, mage.cards.o.OvergrownTomb.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Overgrown Tomb", 494, Rarity.RARE, mage.cards.o.OvergrownTomb.class, NON_FULL_USE_VARIOUS));
