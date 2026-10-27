@@ -1572,7 +1572,14 @@ public abstract class PlayerImpl implements Player, Serializable {
         // Don't generate a new id because it's not necessary and breaks mana events, see #14822
         // ability.newId();
         ability.setControllerId(playerId);
-        if (ability.activate(game, false) && ability.resolve(game)) {
+        boolean activated = ability.activate(game, false);
+        if (activated && !game.inCheckPlayableState()) {
+            GameEvent event = GameEvent.getEvent(GameEvent.EventType.MANA_ABILITY_ACTIVATED,
+                ability.getId(), ability, playerId);
+            event.setZone(ability.getZone());
+            game.fireEvent(event);
+        }
+        if (activated && ability.resolve(game)) {
             if (ability.isUndoPossible()) {
                 if (storedBookmark == -1 || storedBookmark > bookmark) { // e.g. useful for undo Nykthos, Shrine to Nyx
                     setStoredBookmark(bookmark);
@@ -1597,8 +1604,10 @@ public abstract class PlayerImpl implements Player, Serializable {
             ability.setControllerId(playerId);
             game.getStack().push(game, new StackAbility(ability, playerId));
             if (ability.activate(game, false)) {
-                game.fireEvent(GameEvent.getEvent(GameEvent.EventType.ACTIVATED_ABILITY,
-                        ability.getId(), ability, playerId));
+                GameEvent event = GameEvent.getEvent(GameEvent.EventType.ACTIVATED_ABILITY,
+                    ability.getId(), ability, playerId);
+                event.setZone(ability.getZone());
+                game.fireEvent(event);
                 if (!game.isSimulation()) {
                     game.informPlayers(getLogName() + ability.getGameLogMessage(game));
                 }

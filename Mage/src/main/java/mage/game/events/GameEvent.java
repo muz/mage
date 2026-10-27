@@ -267,6 +267,7 @@ public class GameEvent implements Serializable {
          zone        zone the spell is cast from
          */
         ACTIVATE_ABILITY, ACTIVATED_ABILITY,
+        MANA_ABILITY_ACTIVATED, // Successful activation, before resolution; also includes abilities without a tap cost.
         /* ACTIVATE_ABILITY, ACTIVATED_ABILITY,
          WARNING, do not use choose dialogs inside, can be calls multiple types, e.g. on playable checking
          targetId    id of the ability to activate / use
