@@ -356,6 +356,7 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Tal Shiar Analyst", 174, Rarity.COMMON, mage.cards.t.TalShiarAnalyst.class));
         cards.add(new SetCardInfo("Tal Shiar Operative", 131, Rarity.COMMON, mage.cards.t.TalShiarOperative.class));
         cards.add(new SetCardInfo("Tea, Earl Grey, Hot", 269, Rarity.COMMON, mage.cards.t.TeaEarlGreyHot.class));
+        cards.add(new SetCardInfo("Tell Me What You See", 132, Rarity.UNCOMMON, mage.cards.t.TellMeWhatYouSee.class));
         cards.add(new SetCardInfo("Temple Garden", 301, Rarity.RARE, mage.cards.t.TempleGarden.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Temple Garden", 396, Rarity.RARE, mage.cards.t.TempleGarden.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Temple Garden", 491, Rarity.RARE, mage.cards.t.TempleGarden.class, NON_FULL_USE_VARIOUS));

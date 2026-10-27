@@ -380,6 +380,14 @@ public abstract class AbilityImpl implements Ability {
         if (!getModes().choose(game, this)) {
             return false;
         }
+        // One dilemma per choice of one or more modes, before targets and costs.
+        // Casting/activation bookmarks also roll this event back if the action fails.
+        if (getModes().size() > 1 && !getModes().getSelectedModes().isEmpty()
+            && (getAbilityType() == AbilityType.SPELL || getAbilityType().isActivatedAbility()
+            || getAbilityType().isTriggeredAbility())) {
+            game.fireEvent(GameEvent.getEvent(GameEvent.EventType.FACED_DILEMMA,
+                getId(), this, getModes().getChoosingPlayerId()));
+        }
 
         // apply mode costs if they have them
         for (UUID modeId : this.getModes().getSelectedModes()) {
