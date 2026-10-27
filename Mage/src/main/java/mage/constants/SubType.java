@@ -140,6 +140,7 @@ public enum SubType {
     BRINGER("Bringer", SubTypeSet.CreatureType),
     BRUSHWAGG("Brushwagg", SubTypeSet.CreatureType),
     // C
+    CARDASSIAN("Cardassian", SubTypeSet.CreatureType),
     CTAN("C'tan", SubTypeSet.CreatureType),
     CAITIAN("Caitian", SubTypeSet.CreatureType),
     CALAMARI("Calamari", SubTypeSet.CreatureType, true), // Star Wars
