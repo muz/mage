@@ -35,7 +35,7 @@ public final class ArmusSkinOfEvil extends CardImpl {
         this.toughness = new MageInt(6);
 
         // Menace
-        this.addAbility(new MenaceAbility());
+        this.addAbility(MenaceAbility.getInstance());
 
         // At the beginning of your end step, target opponent discards two cards.
         Ability ability = new BeginningOfEndStepTriggeredAbility(new DiscardTargetEffect(2));
