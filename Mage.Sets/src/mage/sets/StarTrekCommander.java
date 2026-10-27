@@ -339,6 +339,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("Sea of Clouds", 399, Rarity.RARE, mage.cards.s.SeaOfClouds.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Sea of Clouds", 555, Rarity.RARE, mage.cards.s.SeaOfClouds.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Seaside Citadel", 556, Rarity.UNCOMMON, mage.cards.s.SeasideCitadel.class));
+        cards.add(new SetCardInfo("Seven of Nine, Tertiary Adjunct", 50, Rarity.RARE, mage.cards.s.SevenOfNineTertiaryAdjunct.class));
         cards.add(new SetCardInfo("Shared Animosity", 295, Rarity.RARE, mage.cards.s.SharedAnimosity.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Shared Animosity", 454, Rarity.RARE, mage.cards.s.SharedAnimosity.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Shattered Landscape", 557, Rarity.COMMON, mage.cards.s.ShatteredLandscape.class));
