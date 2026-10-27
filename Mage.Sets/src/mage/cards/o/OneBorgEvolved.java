@@ -1,6 +1,7 @@
 package mage.cards.o;
 
 import mage.MageInt;
+import mage.abilities.CompoundAbility;
 import mage.abilities.common.SimpleStaticAbility;
 import mage.abilities.costs.mana.GenericManaCost;
 import mage.abilities.effects.common.continuous.GainAbilityControlledEffect;
@@ -35,31 +36,10 @@ public final class OneBorgEvolved extends CardImpl {
         this.toughness = new MageInt(3);
 
         // Artifact creatures you control have flying, double strike, vigilance, menace, lifelink, and ward {2}.
-        SimpleStaticAbility ability = new SimpleStaticAbility(new GainAbilityControlledEffect(
-            FlyingAbility.getInstance(), Duration.WhileOnBattlefield,
-            StaticFilters.FILTER_PERMANENTS_ARTIFACT_CREATURE
-        ).setText("Artifact creatures you control have flying"));
-        ability.addEffect(new GainAbilityControlledEffect(
-            DoubleStrikeAbility.getInstance(), Duration.WhileOnBattlefield,
-            StaticFilters.FILTER_PERMANENTS_ARTIFACT_CREATURE
-        ).setText(", double strike"));
-        ability.addEffect(new GainAbilityControlledEffect(
-            VigilanceAbility.getInstance(), Duration.WhileOnBattlefield,
-            StaticFilters.FILTER_PERMANENTS_ARTIFACT_CREATURE
-        ).setText(", vigilance"));
-        ability.addEffect(new GainAbilityControlledEffect(
-            new MenaceAbility(), Duration.WhileOnBattlefield,
-            StaticFilters.FILTER_PERMANENTS_ARTIFACT_CREATURE
-        ).setText(", menace"));
-        ability.addEffect(new GainAbilityControlledEffect(
-            LifelinkAbility.getInstance(), Duration.WhileOnBattlefield,
-            StaticFilters.FILTER_PERMANENTS_ARTIFACT_CREATURE
-        ).setText(", lifelink"));
-        ability.addEffect(new GainAbilityControlledEffect(
-            new WardAbility(new GenericManaCost(2)), Duration.WhileOnBattlefield,
-            StaticFilters.FILTER_PERMANENTS_ARTIFACT_CREATURE
-        ).setText(", and ward {2}"));
-        this.addAbility(ability);
+        this.addAbility(new SimpleStaticAbility(new GainAbilityControlledEffect(new CompoundAbility(
+            FlyingAbility.getInstance(), DoubleStrikeAbility.getInstance(), VigilanceAbility.getInstance(),
+            MenaceAbility.getInstance(), LifelinkAbility.getInstance(), new WardAbility(new GenericManaCost(2))
+        ), Duration.WhileOnBattlefield, StaticFilters.FILTER_PERMANENTS_ARTIFACT_CREATURE)));
     }
 
     private OneBorgEvolved(final OneBorgEvolved card) {
