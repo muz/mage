@@ -130,6 +130,9 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Dr. Beverly Crusher", 500, Rarity.MYTHIC, mage.cards.d.DrBeverlyCrusher.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Dr. Joseph M'Benga", 196, Rarity.MYTHIC, mage.cards.d.DrJosephMBenga.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Dr. Joseph M'Benga", 469, Rarity.MYTHIC, mage.cards.d.DrJosephMBenga.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Dr. McCoy, Surly Surgeon", 14, Rarity.UNCOMMON, mage.cards.d.DrMcCoySurlySurgeon.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Dr. McCoy, Surly Surgeon", 402, Rarity.UNCOMMON, mage.cards.d.DrMcCoySurlySurgeon.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Dr. McCoy, Surly Surgeon", 526, Rarity.UNCOMMON, mage.cards.d.DrMcCoySurlySurgeon.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Earth, Sector 001", 281, Rarity.COMMON, mage.cards.e.EarthSector001.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Earth, Sector 001", 577, Rarity.COMMON, mage.cards.e.EarthSector001.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Eject the Warp Core", 105, Rarity.COMMON, mage.cards.e.EjectTheWarpCore.class));
