@@ -47,6 +47,7 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Bat'leth", 94, Rarity.UNCOMMON, mage.cards.b.Batleth.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Battle-Scarred Survivalist", 95, Rarity.COMMON, mage.cards.b.BattleScarredSurvivalist.class));
         cards.add(new SetCardInfo("Beckett Mariner, Impetuous Ensign", 138, Rarity.UNCOMMON, mage.cards.b.BeckettMarinerImpetuousEnsign.class));
+        cards.add(new SetCardInfo("Blastoneuron", 96, Rarity.UNCOMMON, mage.cards.b.Blastoneuron.class));
         cards.add(new SetCardInfo("Blood Crypt", 278, Rarity.RARE, mage.cards.b.BloodCrypt.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Blood Crypt", 394, Rarity.RARE, mage.cards.b.BloodCrypt.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Blood Crypt", 489, Rarity.RARE, mage.cards.b.BloodCrypt.class, NON_FULL_USE_VARIOUS));
