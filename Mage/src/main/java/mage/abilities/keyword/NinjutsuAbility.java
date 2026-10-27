@@ -1,5 +1,6 @@
 package mage.abilities.keyword;
 
+import mage.MageObjectReference;
 import mage.abilities.Ability;
 import mage.abilities.ActivatedAbilityImpl;
 import mage.abilities.costs.Cost;
@@ -15,6 +16,8 @@ import mage.constants.Zone;
 import mage.filter.common.FilterControlledCreaturePermanent;
 import mage.filter.predicate.permanent.UnblockedPredicate;
 import mage.game.Game;
+import mage.game.ZonesHandler;
+import mage.game.combat.AttackingCreatureEntry;
 import mage.game.command.CommandObject;
 import mage.game.permanent.Permanent;
 import mage.players.Player;
@@ -112,20 +115,14 @@ class NinjutsuEffect extends OneShotEffect {
         }
         Zone cardZone = game.getState().getZone(card.getId());
         if (cardZone == Zone.HAND || (commander && cardZone == Zone.COMMAND)) {
-            controller.moveCards(card, Zone.BATTLEFIELD, source, game, true, false, false, null);
-            Permanent permanent = game.getPermanent(source.getSourceId());
-            if (permanent != null) {
-                UUID defendingPlayerId = null;
-                for (Cost cost : source.getCosts()) {
-                    if (cost instanceof ReturnAttackerToHandTargetCost) {
-                        defendingPlayerId = ((ReturnAttackerToHandTargetCost) cost).getDefendingPlayerId();
-                    }
-                }
-                if (defendingPlayerId != null) {
-                    game.getCombat().addAttackerToCombat(permanent.getId(), defendingPlayerId, game);
-                    return true;
+            UUID defenderId = null;
+            for (Cost cost : source.getCosts()) {
+                if (cost instanceof ReturnAttackerToHandTargetCost) {
+                    defenderId = ((ReturnAttackerToHandTargetCost) cost).getDefendingPlayerId();
                 }
             }
+            return ZonesHandler.putOntoBattlefieldAttacking(card, controller.getId(), source, game,
+                new AttackingCreatureEntry(new MageObjectReference(defenderId, game))) != null;
         }
         return false;
     }

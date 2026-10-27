@@ -10,6 +10,7 @@ import mage.abilities.effects.ContinuousEffect;
 import mage.abilities.effects.Effect;
 import mage.abilities.effects.RequirementEffect;
 import mage.abilities.effects.RestrictionEffect;
+import mage.abilities.effects.common.PrepareCastFromExileEffect;
 import mage.abilities.effects.common.RegenerateSourceEffect;
 import mage.abilities.effects.common.continuous.BecomesFaceDownCreatureEffect;
 import mage.abilities.hint.HintUtils;
@@ -17,7 +18,6 @@ import mage.abilities.keyword.*;
 import mage.cards.Card;
 import mage.cards.CardImpl;
 import mage.cards.PrepareCard;
-import mage.abilities.effects.common.PrepareCastFromExileEffect;
 import mage.constants.*;
 import mage.counters.Counter;
 import mage.counters.CounterType;
@@ -27,6 +27,7 @@ import mage.game.Game;
 import mage.game.GameState;
 import mage.game.ZoneChangeInfo;
 import mage.game.ZonesHandler;
+import mage.game.combat.AttackingCreatureEntry;
 import mage.game.combat.CombatGroup;
 import mage.game.command.CommandObject;
 import mage.game.events.*;
@@ -40,10 +41,10 @@ import mage.target.TargetPlayer;
 import mage.util.CardUtil;
 import mage.util.GameLog;
 import mage.util.ThreadLocalStringBuilder;
-import org.apache.log4j.Logger;
 
 import java.io.Serializable;
 import java.util.*;
+import org.apache.log4j.Logger;
 
 /**
  * @author BetaSteward_at_googlemail.com
@@ -1389,6 +1390,11 @@ public abstract class PermanentImpl extends CardImpl implements Permanent {
 
     @Override
     public boolean entersBattlefield(Ability source, Game game, Zone fromZone, boolean fireEvent) {
+        return entersBattlefield(source, game, fromZone, fireEvent, null);
+    }
+
+    @Override
+    public boolean entersBattlefield(Ability source, Game game, Zone fromZone, boolean fireEvent, AttackingCreatureEntry attackingEntry) {
         controlledFromStartOfControllerTurn = false;
 
         BecomesFaceDownCreatureEffect.FaceDownType faceDownType = BecomesFaceDownCreatureEffect.findFaceDownType(game, this);
@@ -1419,6 +1425,7 @@ public abstract class PermanentImpl extends CardImpl implements Permanent {
         // 616.1d
         // Any of the applicable replacement and/or prevention effects may be chosen.
         EntersTheBattlefieldEvent event = new EntersTheBattlefieldEvent(this, source, getControllerId(), fromZone);
+        event.setAttackingEntry(attackingEntry);
         if (game.replaceEvent(event)) {
             return false;
         }

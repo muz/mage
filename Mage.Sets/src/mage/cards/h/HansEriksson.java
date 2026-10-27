@@ -4,6 +4,7 @@ import mage.MageInt;
 import mage.abilities.Ability;
 import mage.abilities.common.AttacksTriggeredAbility;
 import mage.abilities.common.delayed.ReflexiveTriggeredAbility;
+import mage.abilities.effects.Effect;
 import mage.abilities.effects.OneShotEffect;
 import mage.abilities.effects.common.FightTargetSourceEffect;
 import mage.cards.Card;
@@ -11,19 +12,14 @@ import mage.cards.CardImpl;
 import mage.cards.CardSetInfo;
 import mage.cards.CardsImpl;
 import mage.constants.*;
-import mage.filter.StaticFilters;
-import mage.filter.common.FilterPlayerOrPlaneswalker;
-import mage.filter.predicate.other.PlayerIdPredicate;
-import mage.filter.predicate.permanent.ControllerIdPredicate;
 import mage.game.Game;
+import mage.game.ZonesHandler;
+import mage.game.combat.AttackingCreatureEntry;
 import mage.game.permanent.Permanent;
 import mage.players.Player;
-import mage.target.common.TargetPlayerOrPlaneswalker;
+import mage.target.targetpointer.FixedTarget;
 
 import java.util.UUID;
-import mage.abilities.effects.Effect;
-import mage.target.targetpointer.FixedTarget;
-import mage.util.CardUtil;
 
 /**
  * @author TheElk801
@@ -88,31 +84,10 @@ class HansErikssonEffect extends OneShotEffect {
         if (!card.isCreature(game)) {
             return player.moveCards(card, Zone.HAND, source, game);
         }
-        player.moveCards(card, Zone.BATTLEFIELD, source, game, true, false, false, null);
-        Permanent permanent = CardUtil.getPermanentFromCardPutToBattlefield(card, game);
+        Permanent permanent = ZonesHandler.putOntoBattlefieldAttacking(card, player.getId(), source, game,
+            AttackingCreatureEntry.attackingPlayer(getTargetPointer().getFirst(game, source)));
         if (permanent == null) {
             return true;
-        }
-        UUID defendingPlayerId = getTargetPointer().getFirst(game, source);
-        UUID defenderId;
-        if (game.getBattlefield().count(
-                StaticFilters.FILTER_CONTROLLED_PERMANENT_PLANESWALKER,
-                defendingPlayerId, source, game
-        ) < 1) {
-            defenderId = defendingPlayerId;
-        } else {
-            FilterPlayerOrPlaneswalker filter = new FilterPlayerOrPlaneswalker(
-                    "defending player or a planeswalker they control"
-            );
-            filter.getPlayerFilter().add(new PlayerIdPredicate(defendingPlayerId));
-            filter.getPermanentFilter().add(new ControllerIdPredicate(defendingPlayerId));
-            TargetPlayerOrPlaneswalker target = new TargetPlayerOrPlaneswalker(filter);
-            target.withNotTarget(true);
-            player.choose(outcome, target, source, game);
-            defenderId = target.getFirstTarget();
-        }
-        if (defenderId != null) {
-            game.getCombat().addAttackerToCombat(permanent.getId(), defenderId, game);
         }
         Effect fightEffect = new FightTargetSourceEffect();
         fightEffect.setTargetPointer(new FixedTarget(permanent, game));

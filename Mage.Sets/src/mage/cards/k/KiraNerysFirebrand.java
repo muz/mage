@@ -1,31 +1,38 @@
 package mage.cards.k;
 
-import java.util.UUID;
 import mage.MageInt;
 import mage.abilities.Ability;
-import mage.abilities.common.EntersBattlefieldControlledTriggeredAbility;
+import mage.abilities.common.EntersBattlefieldAllTriggeredAbility;
 import mage.abilities.common.SimpleStaticAbility;
 import mage.abilities.effects.ReplacementEffectImpl;
 import mage.abilities.effects.common.continuous.BoostTargetEffect;
-import mage.constants.*;
 import mage.abilities.keyword.TrampleAbility;
 import mage.cards.CardImpl;
 import mage.cards.CardSetInfo;
+import mage.constants.CardType;
+import mage.constants.Duration;
+import mage.constants.Outcome;
+import mage.constants.SetTargetPointer;
+import mage.constants.SubType;
+import mage.constants.SuperType;
+import mage.constants.Zone;
 import mage.filter.StaticFilters;
 import mage.game.Game;
+import mage.game.combat.AttackingCreatureEntry;
 import mage.game.events.EntersTheBattlefieldEvent;
 import mage.game.events.GameEvent;
 import mage.game.permanent.Permanent;
 
+import java.util.UUID;
+
 /**
- *
- * @author anonymous
+ * @author muz
  */
 public final class KiraNerysFirebrand extends CardImpl {
 
     public KiraNerysFirebrand(UUID ownerId, CardSetInfo setInfo) {
         super(ownerId, setInfo, new CardType[]{CardType.CREATURE}, "{1}{R}{W}");
-        
+
         this.supertype.add(SuperType.LEGENDARY);
         this.subtype.add(SubType.BAJORAN);
         this.subtype.add(SubType.SOLDIER);
@@ -39,10 +46,9 @@ public final class KiraNerysFirebrand extends CardImpl {
         this.addAbility(new SimpleStaticAbility(new KiraNerysFirebrandEffect()));
 
         // Whenever another creature you control enters, it gets +1/+1 until end of turn.
-        this.addAbility(new EntersBattlefieldControlledTriggeredAbility(Zone.BATTLEFIELD,
-                new BoostTargetEffect(1, 1, Duration.EndOfTurn).setText("it gets +1/+1"),
-                StaticFilters.FILTER_ANOTHER_CREATURE, false, SetTargetPointer.PERMANENT));
-
+        this.addAbility(new EntersBattlefieldAllTriggeredAbility(Zone.BATTLEFIELD,
+            new BoostTargetEffect(1, 1).setText("it gets +1/+1 until end of turn"),
+            StaticFilters.FILTER_ANOTHER_CREATURE_YOU_CONTROL, false, SetTargetPointer.PERMANENT));
     }
 
     private KiraNerysFirebrand(final KiraNerysFirebrand card) {
@@ -57,11 +63,12 @@ public final class KiraNerysFirebrand extends CardImpl {
 
 class KiraNerysFirebrandEffect extends ReplacementEffectImpl {
 
-    public KiraNerysFirebrandEffect() {
+    KiraNerysFirebrandEffect() {
         super(Duration.WhileOnBattlefield, Outcome.Benefit, false);
+        staticText = "if a creature you control would enter while you control an attacking creature, instead it enters tapped and attacking";
     }
 
-    protected KiraNerysFirebrandEffect(final KiraNerysFirebrandEffect effect) {
+    private KiraNerysFirebrandEffect(final KiraNerysFirebrandEffect effect) {
         super(effect);
     }
 
@@ -71,34 +78,25 @@ class KiraNerysFirebrandEffect extends ReplacementEffectImpl {
     }
 
     @Override
-    public boolean replaceEvent(GameEvent event, Ability source, Game game) {
-        Permanent target = ((EntersTheBattlefieldEvent) event).getTarget();
-        if (target != null) {
-            // enters tapped - it does not become tapped (no tapped event and triggers)
-            target.setTapped(true);
-            target.setEntersAttacking(game.getCombat().getPossibleDefenders(target.getId(), null, game));
-        }
-        return false;
-    }
-
-    @Override
     public boolean checksEventType(GameEvent event, Game game) {
         return event.getType() == GameEvent.EventType.ENTERS_THE_BATTLEFIELD;
     }
 
     @Override
     public boolean applies(GameEvent event, Ability source, Game game) {
-        Permanent permanent = ((EntersTheBattlefieldEvent) event).getTarget();
-        if (permanent == null
-                || !permanent.isCreature(game)
-                || !permanent.isControlledBy(source.getControllerId())) {
-            return false;
+        Permanent entering = ((EntersTheBattlefieldEvent) event).getTarget();
+        return entering != null && entering.isCreature(game) && entering.isControlledBy(source.getControllerId())
+            && game.getBattlefield().getAllActivePermanents(StaticFilters.FILTER_PERMANENT_CREATURE, source.getControllerId(), game)
+            .stream().anyMatch(Permanent::isAttacking);
+    }
+
+    @Override
+    public boolean replaceEvent(GameEvent event, Ability source, Game game) {
+        EntersTheBattlefieldEvent enterEvent = (EntersTheBattlefieldEvent) event;
+        enterEvent.getTarget().setTapped(true);
+        if (enterEvent.getAttackingEntry() == null) {
+            enterEvent.setAttackingEntry(new AttackingCreatureEntry());
         }
-        // while you control an attacking creature
-        return game.getCombat()
-                .getAttackers()
-                .stream()
-                .map(game::getPermanent)
-                .anyMatch(attacker -> attacker != null && attacker.isControlledBy(source.getControllerId()));
+        return false;
     }
 }

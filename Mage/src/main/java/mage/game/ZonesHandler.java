@@ -6,6 +6,7 @@ import mage.cards.*;
 import mage.constants.Outcome;
 import mage.constants.Zone;
 import mage.filter.FilterCard;
+import mage.game.combat.AttackingCreatureEntry;
 import mage.game.command.Commander;
 import mage.game.events.ZoneChangeBatchEvent;
 import mage.game.events.ZoneChangeEvent;
@@ -15,6 +16,7 @@ import mage.game.permanent.PermanentMeld;
 import mage.game.stack.Spell;
 import mage.players.Player;
 import mage.target.TargetCard;
+import mage.util.CardUtil;
 import mage.util.FuzzyTestsUtil;
 
 import java.util.*;
@@ -36,6 +38,18 @@ public final class ZonesHandler {
             return true;
         }
         return false;
+    }
+
+    public static Permanent putOntoBattlefieldAttacking(Card card, UUID controllerId, Ability source, Game game, AttackingCreatureEntry attackingEntry) {
+        ZoneChangeEvent event = new ZoneChangeEvent(card.getId(), source, controllerId,
+            game.getState().getZone(card.getId()), Zone.BATTLEFIELD);
+        ZoneChangeInfo.Battlefield info = new ZoneChangeInfo.Battlefield(event, true, source)
+            .withAttacking(attackingEntry);
+        if (!moveCard(info, game, source)) {
+            return null;
+        }
+        game.applyEffects();
+        return CardUtil.getPermanentFromCardPutToBattlefield(card, game);
     }
 
     public static boolean moveCard(ZoneChangeInfo info, Game game, Ability source) {
@@ -131,6 +145,8 @@ public final class ZonesHandler {
             game.applyEffects();
             game.getCombat().addEnteringAttackers(enteringAttackers, game);
         }
+        // Complete entry before later instructions of the resolving effect can inspect combat.
+        game.getState().completeBattlefieldEntry(game);
         return zoneChangeInfos;
     }
 
@@ -457,7 +473,9 @@ public final class ZonesHandler {
                 game.setScopeRelevant(true);
                 try {
                     game.getContinuousEffects().setController(permanent.getId(), permanent.getControllerId());
-                    if (permanent.entersBattlefield(source, game, fromZone, true)
+                    AttackingCreatureEntry attackingEntry = info instanceof ZoneChangeInfo.Battlefield
+                        ? ((ZoneChangeInfo.Battlefield) info).attackingEntry : null;
+                    if (permanent.entersBattlefield(source, game, fromZone, true, attackingEntry)
                             && card.removeFromZone(game, fromZone, source)) {
                         success = true;
                         event.setTarget(permanent);

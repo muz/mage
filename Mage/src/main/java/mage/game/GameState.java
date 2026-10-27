@@ -12,6 +12,7 @@ import mage.constants.TurnPhase;
 import mage.constants.Zone;
 import mage.designations.Designation;
 import mage.filter.common.FilterCreaturePermanent;
+import mage.game.combat.AttackingCreatureEntry;
 import mage.game.combat.Combat;
 import mage.game.combat.CombatGroup;
 import mage.game.command.Command;
@@ -19,6 +20,7 @@ import mage.game.command.CommandObject;
 import mage.game.command.Emblem;
 import mage.game.command.Plane;
 import mage.game.events.*;
+import mage.game.events.EntersTheBattlefieldEvent;
 import mage.game.permanent.Battlefield;
 import mage.game.permanent.Permanent;
 import mage.game.permanent.PermanentCard;
@@ -37,12 +39,12 @@ import mage.util.Copyable;
 import mage.util.ThreadLocalStringBuilder;
 import mage.watchers.Watcher;
 import mage.watchers.Watchers;
-import org.apache.log4j.Logger;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.apache.log4j.Logger;
 
 /**
  * @author BetaSteward_at_googlemail.com
@@ -100,6 +102,7 @@ public class GameState implements Serializable, Copyable<GameState> {
     private Map<String, Object> values = new HashMap<>();
     private Map<UUID, Zone> zones = new HashMap<>();
     private List<GameEvent> simultaneousEvents = new ArrayList<>();
+    private Set<UUID> completedAttackingEntries = new HashSet<>();
     private Map<UUID, CardState> cardState = new HashMap<>();
     private Map<MageObjectReference, Map<String, Object>> permanentCostsTags = new HashMap<>(); // Permanent reference -> map of (tag -> values) describing how the permanent's spell was cast
     private Map<UUID, MageObjectAttribute> mageObjectAttribute = new HashMap<>();
@@ -177,6 +180,7 @@ public class GameState implements Serializable, Copyable<GameState> {
         this.values = CardUtil.deepCopyObject(state.values);
         this.zones.putAll(state.zones);
         this.simultaneousEvents.addAll(state.simultaneousEvents);
+        this.completedAttackingEntries.addAll(state.completedAttackingEntries);
         this.cardState = CardUtil.deepCopyObject(state.cardState);
         this.permanentCostsTags = CardUtil.deepCopyObject(state.permanentCostsTags);
         this.mageObjectAttribute = CardUtil.deepCopyObject(state.mageObjectAttribute);
@@ -228,6 +232,7 @@ public class GameState implements Serializable, Copyable<GameState> {
         values.clear();
         zones.clear();
         simultaneousEvents.clear();
+        completedAttackingEntries.clear();
         copiedCards.clear();
         persistentCardCopySources.clear();
         usePowerInsteadOfToughnessForDamageLethalityFilters.clear();
@@ -278,6 +283,7 @@ public class GameState implements Serializable, Copyable<GameState> {
         }
         this.zones = state.zones;
         this.simultaneousEvents = state.simultaneousEvents;
+        this.completedAttackingEntries = state.completedAttackingEntries;
         this.cardState = state.cardState;
         this.permanentCostsTags = state.permanentCostsTags;
         this.mageObjectAttribute = state.mageObjectAttribute;
@@ -821,14 +827,33 @@ public class GameState implements Serializable, Copyable<GameState> {
         simultaneousEvents.add(event);
     }
 
+    public void completeBattlefieldEntry(Game game) {
+        for (GameEvent event : new ArrayList<>(simultaneousEvents)) {
+            if (!(event instanceof EntersTheBattlefieldEvent)) {
+                continue;
+            }
+            EntersTheBattlefieldEvent enterEvent = (EntersTheBattlefieldEvent) event;
+            AttackingCreatureEntry attackingEntry = enterEvent.getAttackingEntry();
+            Permanent permanent = game.getPermanent(event.getTargetId());
+            if (attackingEntry == null || permanent == null
+                || permanent.getZoneChangeCounter(game) != enterEvent.getTarget().getZoneChangeCounter(game)
+                || !completedAttackingEntries.add(event.getId())) {
+                continue;
+            }
+            game.getCombat().addEnteringAttackingCreature(permanent.getId(), attackingEntry, game);
+        }
+    }
+
     public void handleSimultaneousEvent(Game game) {
         if (!simultaneousEvents.isEmpty() && !getTurn().isEndTurnRequested()) {
+            completeBattlefieldEntry(game);
             // it can happen, that the events add new simultaneous events, so copy the list before
             List<GameEvent> eventsToHandle = new ArrayList<>();
             List<GameEvent> eventGroups = createEventGroups(simultaneousEvents, game);
             eventsToHandle.addAll(simultaneousEvents);
             eventsToHandle.addAll(eventGroups);
             simultaneousEvents.clear();
+            completedAttackingEntries.clear();
             for (GameEvent event : eventsToHandle) {
                 this.handleEvent(event, game);
             }

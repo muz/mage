@@ -1,13 +1,14 @@
 package mage.game;
 
+import mage.abilities.Ability;
+import mage.cards.MeldCard;
+import mage.game.combat.AttackingCreatureEntry;
+import mage.game.events.ZoneChangeEvent;
+import mage.game.stack.Spell;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import mage.abilities.Ability;
-import mage.cards.MeldCard;
-import mage.game.events.ZoneChangeEvent;
-import mage.game.stack.Spell;
 
 /**
  * Created by Dilnu on 9/4/16.
@@ -96,6 +97,7 @@ public class ZoneChangeInfo {
 
         public boolean tapped;
         public Ability source;
+        public AttackingCreatureEntry attackingEntry;
 
         public Battlefield(ZoneChangeEvent event, boolean tapped, Ability source) {
             super(event);
@@ -113,6 +115,12 @@ public class ZoneChangeInfo {
             super(info);
             this.tapped = info.tapped;
             this.source = info.source;
+            this.attackingEntry = info.attackingEntry;
+        }
+
+        public Battlefield withAttacking(AttackingCreatureEntry attackingEntry) {
+            this.attackingEntry = attackingEntry;
+            return this;
         }
 
         @Override

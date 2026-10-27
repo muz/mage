@@ -10,6 +10,7 @@ import mage.counters.CounterType;
 import mage.game.Controllable;
 import mage.game.Game;
 import mage.game.GameState;
+import mage.game.combat.AttackingCreatureEntry;
 import mage.game.stack.Spell;
 import mage.util.CardUtil;
 
@@ -254,6 +255,8 @@ public interface Permanent extends Card, Controllable {
     int fightWithExcess(Permanent fightTarget, Ability source, Game game, boolean batchTrigger);
 
     boolean entersBattlefield(Ability source, Game game, Zone fromZone, boolean fireEvent);
+
+    boolean entersBattlefield(Ability source, Game game, Zone fromZone, boolean fireEvent, AttackingCreatureEntry attackingEntry);
 
     String getValue(GameState state);
 

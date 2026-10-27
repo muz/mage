@@ -33,12 +33,12 @@ import mage.target.common.TargetControlledPermanent;
 import mage.target.common.TargetDefender;
 import mage.util.CardUtil;
 import mage.util.Copyable;
-import org.apache.log4j.Logger;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.log4j.Logger;
 
 /**
  * @author BetaSteward_at_googlemail.com
@@ -311,6 +311,11 @@ public class Combat implements Serializable, Copyable<Combat> {
     }
 
     public boolean addAttackingCreature(UUID creatureId, Game game, UUID playerToAttack) {
+        Permanent creature = game.getPermanent(creatureId);
+        if (creature != null && creature.isAttacking() && playerToAttack == null) {
+            // An entry replacement may already have put this creature into combat.
+            return true;
+        }
         return chooseDefenderAndAddAttacker(creatureId, getPossibleDefenders(creatureId, playerToAttack, game), game);
     }
 
@@ -332,6 +337,56 @@ public class Combat implements Serializable, Copyable<Combat> {
             }
         }
         return false;
+    }
+
+    /**
+     * Entry does not declare an attacker: restrictions and attack costs do not apply (508.4c).
+     */
+    public boolean addEnteringAttackingCreature(UUID creatureId, AttackingCreatureEntry entry, Game game) {
+        Permanent creature = game.getPermanent(creatureId);
+        if (creature == null || !creature.isCreature(game) || creature.isBattle(game)
+            || !creature.isControlledBy(attackingPlayerId) || creature.isAttacking()) {
+            return false;
+        }
+        Set<UUID> players = new HashSet<>(getAttackablePlayers(game));
+        if (entry.getDefendingPlayer() != null) {
+            players.retainAll(Collections.singleton(entry.getDefendingPlayer()));
+        }
+        Set<UUID> possibleDefenders = new HashSet<>(players);
+        for (Permanent permanent : game.getBattlefield().getAllActivePermanents()) {
+            if (permanent.isPlaneswalker(game) && players.contains(permanent.getControllerId())) {
+                possibleDefenders.add(permanent.getId());
+            } else if (entry.getDefendingPlayer() == null && permanent.isBattle(game)
+                && players.contains(permanent.getProtectorId())) {
+                possibleDefenders.add(permanent.getId());
+            }
+        }
+        if (entry.getPossibleDefenders() != null) {
+            possibleDefenders.retainAll(entry.getPossibleDefenders());
+        }
+        if (creature.isEntersAttacking()) {
+            possibleDefenders.retainAll(creature.getEntersAttackingDefenders());
+        }
+        MageObjectReference specified = entry.getDefender();
+        if (specified != null) {
+            UUID defenderId = specified.getSourceId();
+            if (!possibleDefenders.contains(defenderId)
+                || (game.getPlayer(defenderId) == null && specified.getPermanent(game) == null)) {
+                return false;
+            }
+            return addAttackerToCombat(creatureId, defenderId, game, false);
+        }
+        if (possibleDefenders.isEmpty()) {
+            return false;
+        }
+        if (possibleDefenders.size() == 1) {
+            return addAttackerToCombat(creatureId, possibleDefenders.iterator().next(), game, false);
+        }
+        Player player = game.getPlayer(attackingPlayerId);
+        TargetDefender target = new TargetDefender(possibleDefenders);
+        target.withTargetName("defender for " + creature.getLogName() + " to attack");
+        return player != null && player.chooseTarget(Outcome.Damage, target, null, game)
+            && addAttackerToCombat(creatureId, target.getFirstTarget(), game, false);
     }
 
     public void selectAttackers(Game game) {
@@ -1557,18 +1612,22 @@ public class Combat implements Serializable, Copyable<Combat> {
     }
 
     public boolean addAttackerToCombat(UUID attackerId, UUID defenderId, Game game) {
+        return addAttackerToCombat(attackerId, defenderId, game, true);
+    }
+
+    private boolean addAttackerToCombat(UUID attackerId, UUID defenderId, Game game, boolean checkAttackRestrictions) {
         if (findGroup(attackerId) != null) {
             // one creature can't attack twice (a second combat group gives double damage and triggers)
             Permanent attackingCreature = game.getPermanent(attackerId);
             throw new IllegalStateException("Wrong code usage: creature is already attacking, it must be removed from combat first - "
                     + (attackingCreature == null ? attackerId : attackingCreature.getIdName()));
         }
-        if (!defenders.contains(defenderId)) {
+        if (checkAttackRestrictions && !defenders.contains(defenderId)) {
             return false;
         }
         Permanent defender = game.getPermanent(defenderId);
         // Check if defending player can be attacked with another creature
-        if (!canDefenderBeAttacked(attackerId, defenderId, game)) {
+        if (checkAttackRestrictions && !canDefenderBeAttacked(attackerId, defenderId, game)) {
             return false;
         }
         Permanent attacker = game.getPermanent(attackerId);

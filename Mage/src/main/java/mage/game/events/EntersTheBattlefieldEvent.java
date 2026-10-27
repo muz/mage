@@ -1,12 +1,12 @@
-
 package mage.game.events;
-
-import java.util.UUID;
 
 import mage.abilities.Ability;
 import mage.constants.EnterEventType;
 import mage.constants.Zone;
+import mage.game.combat.AttackingCreatureEntry;
 import mage.game.permanent.Permanent;
+
+import java.util.UUID;
 
 /**
  *
@@ -16,6 +16,7 @@ public class EntersTheBattlefieldEvent extends GameEvent {
 
     private final Zone fromZone;
     private Permanent target;
+    private AttackingCreatureEntry attackingEntry;
 
     public EntersTheBattlefieldEvent(Permanent target, Ability source, UUID playerId, Zone fromZone) {
         this(target, source, playerId, fromZone, EnterEventType.OTHER);
@@ -44,6 +45,14 @@ public class EntersTheBattlefieldEvent extends GameEvent {
         }
         this.fromZone = fromZone;
         this.target = target;
+    }
+
+    public AttackingCreatureEntry getAttackingEntry() {
+        return attackingEntry;
+    }
+
+    public void setAttackingEntry(AttackingCreatureEntry attackingEntry) {
+        this.attackingEntry = attackingEntry;
     }
 
     public Zone getFromZone() {

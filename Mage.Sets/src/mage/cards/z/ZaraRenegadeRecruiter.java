@@ -12,17 +12,13 @@ import mage.cards.CardImpl;
 import mage.cards.CardSetInfo;
 import mage.constants.*;
 import mage.filter.StaticFilters;
-import mage.filter.common.FilterPlayerOrPlaneswalker;
-import mage.filter.predicate.other.PlayerIdPredicate;
-import mage.filter.predicate.permanent.ControllerIdPredicate;
 import mage.game.Game;
+import mage.game.ZonesHandler;
+import mage.game.combat.AttackingCreatureEntry;
 import mage.game.permanent.Permanent;
 import mage.players.Player;
 import mage.target.TargetCard;
-import mage.target.common.TargetCardInHand;
-import mage.target.common.TargetPlayerOrPlaneswalker;
 import mage.target.targetpointer.FixedTarget;
-import mage.util.CardUtil;
 
 import java.util.UUID;
 
@@ -90,32 +86,11 @@ class ZaraRenegadeRecruiterEffect extends OneShotEffect {
         if (card == null) {
             return false;
         }
-        controller.moveCards(
-                card, Zone.BATTLEFIELD, source, game, true,
-                false, false, null
-        );
-        Permanent permanent = CardUtil.getPermanentFromCardPutToBattlefield(card, game);
+        Permanent permanent = ZonesHandler.putOntoBattlefieldAttacking(card, controller.getId(), source, game,
+            AttackingCreatureEntry.attackingPlayer(player.getId()));
         if (permanent == null) {
             return false;
         }
-        UUID defenderId;
-        if (game.getBattlefield().count(
-                StaticFilters.FILTER_CONTROLLED_PERMANENT_PLANESWALKER,
-                player.getId(), source, game
-        ) < 1) {
-            defenderId = player.getId();
-        } else {
-            FilterPlayerOrPlaneswalker filter = new FilterPlayerOrPlaneswalker(
-                    player.getName() + " or a planeswalker controlled by " + player.getName()
-            );
-            filter.getPlayerFilter().add(new PlayerIdPredicate(player.getId()));
-            filter.getPermanentFilter().add(new ControllerIdPredicate(player.getId()));
-            TargetPlayerOrPlaneswalker target = new TargetPlayerOrPlaneswalker(filter);
-            target.withNotTarget(true);
-            controller.choose(outcome, target, source, game);
-            defenderId = target.getFirstTarget();
-        }
-        game.getCombat().addAttackerToCombat(permanent.getId(), defenderId, game);
         game.addDelayedTriggeredAbility(new AtTheBeginOfNextEndStepDelayedTriggeredAbility(
                 new ReturnToHandTargetEffect().setTargetPointer(new FixedTarget(permanent, game))
         ), source);

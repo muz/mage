@@ -13,6 +13,7 @@ import mage.cards.repository.TokenRepository;
 import mage.cards.repository.TokenType;
 import mage.constants.*;
 import mage.game.Game;
+import mage.game.combat.AttackingCreatureEntry;
 import mage.game.events.CreateTokenEvent;
 import mage.game.events.CreatedTokenEvent;
 import mage.game.events.CreatedTokensEvent;
@@ -339,7 +340,9 @@ public abstract class TokenImpl extends MageObjectImpl implements Token {
             // check ETB effects
             game.setScopeRelevant(true);
             for (Permanent permanent : needTokens) {
-                if (permanent.entersBattlefield(source, game, Zone.OUTSIDE, true)) {
+                AttackingCreatureEntry attackingEntry = attacking
+                    ? AttackingCreatureEntry.attackingDefenders(attackedDefenders) : null;
+                if (permanent.entersBattlefield(source, game, Zone.OUTSIDE, true, attackingEntry)) {
                     allowedTokens.add(permanent);
                 } else {
                     game.getPermanentsEntering().remove(permanent.getId());
@@ -448,12 +451,7 @@ public abstract class TokenImpl extends MageObjectImpl implements Token {
                     }
                 }
 
-                // must attack (added to combat after all tokens are on the battlefield, see below)
-                if (attacking) {
-                    permanent.setEntersAttacking(attackedDefenders == null
-                            ? game.getCombat().getPossibleDefenders(permanent.getId(), null, game)
-                            : attackedDefenders);
-                }
+                // Preserve entry replacements that mark a permanent as entering attacking.
                 if (permanent.isEntersAttacking()) {
                     enteringAttackers.add(permanent.getId());
                 }
@@ -473,6 +471,7 @@ public abstract class TokenImpl extends MageObjectImpl implements Token {
         // must attack (508.4): only after all tokens are on the battlefield and effects are applied,
         // so a defender choice shows a finished game state
         game.getCombat().addEnteringAttackers(enteringAttackers, game);
+        game.getState().completeBattlefieldEntry(game);
     }
 
     @Override
