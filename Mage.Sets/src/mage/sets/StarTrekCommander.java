@@ -344,6 +344,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("Shattered Landscape", 557, Rarity.COMMON, mage.cards.s.ShatteredLandscape.class));
         cards.add(new SetCardInfo("Shineshadow Snarl", 400, Rarity.RARE, mage.cards.s.ShineshadowSnarl.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Shineshadow Snarl", 558, Rarity.RARE, mage.cards.s.ShineshadowSnarl.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Shore Leave Planet", 130, Rarity.RARE, mage.cards.s.ShoreLeavePlanet.class));
         cards.add(new SetCardInfo("Shuttle Crew", 137, Rarity.UNCOMMON, mage.cards.s.ShuttleCrew.class));
         cards.add(new SetCardInfo("Shuttlecraft Galileo", 236, Rarity.RARE, mage.cards.s.ShuttlecraftGalileo.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Shuttlecraft Galileo", 28, Rarity.RARE, mage.cards.s.ShuttlecraftGalileo.class, NON_FULL_USE_VARIOUS));
