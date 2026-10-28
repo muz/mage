@@ -414,6 +414,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("The Beacon of Kahless", 64, Rarity.RARE, mage.cards.t.TheBeaconOfKahless.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("The Immortal Sun", 347, Rarity.MYTHIC, mage.cards.t.TheImmortalSun.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("The Immortal Sun", 495, Rarity.MYTHIC, mage.cards.t.TheImmortalSun.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("The Promise of Kahless", 61, Rarity.RARE, mage.cards.t.ThePromiseOfKahless.class));
         cards.add(new SetCardInfo("The Sword of Kahless", 123, Rarity.RARE, mage.cards.t.TheSwordOfKahless.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("The Sword of Kahless", 357, Rarity.RARE, mage.cards.t.TheSwordOfKahless.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Thirst for Knowledge", 443, Rarity.UNCOMMON, mage.cards.t.ThirstForKnowledge.class));
