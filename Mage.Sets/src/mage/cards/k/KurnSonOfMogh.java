@@ -5,14 +5,16 @@ import mage.MageInt;
 import mage.abilities.Ability;
 import mage.abilities.common.AttacksTriggeredAbility;
 import mage.abilities.dynamicvalue.common.AttackedThisTurnOpponentsCount;
-import mage.abilities.effects.common.DrawCardSourceControllerEffect;
-import mage.abilities.effects.common.LoseLifeSourceControllerEffect;
+import mage.abilities.effects.OneShotEffect;
 import mage.abilities.keyword.DeathtouchAbility;
 import mage.cards.CardImpl;
 import mage.cards.CardSetInfo;
 import mage.constants.CardType;
+import mage.constants.Outcome;
 import mage.constants.SubType;
 import mage.constants.SuperType;
+import mage.game.Game;
+import mage.players.Player;
 import mage.watchers.common.PlayersAttackedThisTurnWatcher;
 
 /**
@@ -34,15 +36,8 @@ public final class KurnSonOfMogh extends CardImpl {
         this.addAbility(DeathtouchAbility.getInstance());
 
         // Battlefront -- Whenever Kurn attacks, you draw X cards and lose X life, where X is the number of opponents you attacked this turn.
-        Ability ability = new AttacksTriggeredAbility(
-            new DrawCardSourceControllerEffect(AttackedThisTurnOpponentsCount.instance)
-                .setText("you draw X cards")
-        );
-        ability.addEffect(
-            new LoseLifeSourceControllerEffect(AttackedThisTurnOpponentsCount.instance)
-                .setText("and lose X life, where X is the number of opponents you attacked this turn")
-        );
-        this.addAbility(ability.withFlavorWord("Battlefront").addHint(AttackedThisTurnOpponentsCount.getHint()), new PlayersAttackedThisTurnWatcher());
+        this.addAbility(new AttacksTriggeredAbility(new KurnSonOfMoghEffect()).withFlavorWord("Battlefront")
+            .addHint(AttackedThisTurnOpponentsCount.getHint()), new PlayersAttackedThisTurnWatcher());
     }
 
     private KurnSonOfMogh(final KurnSonOfMogh card) {
@@ -52,5 +47,34 @@ public final class KurnSonOfMogh extends CardImpl {
     @Override
     public KurnSonOfMogh copy() {
         return new KurnSonOfMogh(this);
+    }
+}
+
+class KurnSonOfMoghEffect extends OneShotEffect {
+
+    KurnSonOfMoghEffect() {
+        super(Outcome.DrawCard);
+        staticText = "you draw X cards and lose X life, where X is the number of opponents you attacked this turn";
+    }
+
+    private KurnSonOfMoghEffect(final KurnSonOfMoghEffect effect) {
+        super(effect);
+    }
+
+    @Override
+    public KurnSonOfMoghEffect copy() {
+        return new KurnSonOfMoghEffect(this);
+    }
+
+    @Override
+    public boolean apply(Game game, Ability source) {
+        Player controller = game.getPlayer(source.getControllerId());
+        if (controller == null) {
+            return false;
+        }
+        int amount = AttackedThisTurnOpponentsCount.instance.calculate(game, source, this);
+        controller.drawCards(amount, source, game);
+        controller.loseLife(amount, game, source, false);
+        return true;
     }
 }
