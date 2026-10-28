@@ -1,11 +1,9 @@
 package mage.cards.k;
 
-import mage.abilities.Ability;
 import mage.abilities.common.SimpleStaticAbility;
 import mage.abilities.condition.common.MyTurnCondition;
 import mage.abilities.decorator.ConditionalContinuousEffect;
-import mage.abilities.effects.common.continuous.GainAbilityControlledEffect;
-import mage.abilities.effects.common.continuous.GainAbilitySourceEffect;
+import mage.abilities.effects.common.continuous.GainAbilityAllEffect;
 import mage.abilities.keyword.FlyingAbility;
 import mage.abilities.keyword.HasteAbility;
 import mage.abilities.keyword.HexproofAbility;
@@ -17,7 +15,9 @@ import mage.cards.CardSetInfo;
 import mage.constants.CardType;
 import mage.constants.Duration;
 import mage.constants.SubType;
-import mage.filter.StaticFilters;
+import mage.filter.common.FilterControlledPermanent;
+import mage.filter.predicate.Predicates;
+import mage.filter.predicate.mageobject.AnotherPredicate;
 
 import java.util.UUID;
 
@@ -26,27 +26,21 @@ import java.util.UUID;
  */
 public final class KVortClassRaider extends CardImpl {
 
+    private static final FilterControlledPermanent filter = new FilterControlledPermanent();
+
+    static {
+        filter.add(Predicates.or(AnotherPredicate.instance.negate(), CardType.CREATURE.getPredicate()));
+    }
+
     public KVortClassRaider(UUID ownerId, CardSetInfo setInfo) {
         super(ownerId, setInfo, new CardType[]{CardType.ARTIFACT}, "{4}");
 
         this.subtype.add(SubType.SPACECRAFT);
 
         // During your turn, this Spacecraft and creatures you control have hexproof.
-        Ability ability = new SimpleStaticAbility(new ConditionalContinuousEffect(
-            new GainAbilitySourceEffect(HexproofAbility.getInstance()),
-            MyTurnCondition.instance,
-            "during your turn, {this}"
-        ));
-        ability.addEffect(new ConditionalContinuousEffect(
-            new GainAbilityControlledEffect(
-                HexproofAbility.getInstance(),
-                Duration.WhileOnBattlefield,
-                StaticFilters.FILTER_PERMANENT_CREATURES
-            ),
-            MyTurnCondition.instance,
-            "and creatures you control have hexproof"
-        ));
-        this.addAbility(ability);
+        this.addAbility(new SimpleStaticAbility(new ConditionalContinuousEffect(new GainAbilityAllEffect(
+            HexproofAbility.getInstance(), Duration.WhileOnBattlefield, filter
+        ), MyTurnCondition.instance, "During your turn, {this} and creatures you control have hexproof")));
 
         // Station
         this.addAbility(new StationAbility());
