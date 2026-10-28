@@ -433,6 +433,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("Tribble Cluster", 242, Rarity.RARE, mage.cards.t.TribbleCluster.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Tribble Cluster", 32, Rarity.RARE, mage.cards.t.TribbleCluster.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Troi, Winging It", 191, Rarity.RARE, mage.cards.t.TroiWingingIt.class));
+        cards.add(new SetCardInfo("Tuvok, Chief Tactical Officer", 53, Rarity.RARE, mage.cards.t.TuvokChiefTacticalOfficer.class));
         cards.add(new SetCardInfo("Type-03 Borg Vessel", 243, Rarity.RARE, mage.cards.t.Type03BorgVessel.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Type-03 Borg Vessel", 33, Rarity.RARE, mage.cards.t.Type03BorgVessel.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("U.S.S. Defiant, Tough Little Ship", 125, Rarity.RARE, mage.cards.u.USSDefiantToughLittleShip.class, NON_FULL_USE_VARIOUS));
