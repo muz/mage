@@ -203,6 +203,7 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Island", 320, Rarity.LAND, mage.cards.basiclands.Island.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Island", 561, Rarity.LAND, mage.cards.basiclands.Island.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Island", 562, Rarity.LAND, mage.cards.basiclands.Island.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Isolinear Processor", 266, Rarity.UNCOMMON, mage.cards.i.IsolinearProcessor.class));
         cards.add(new SetCardInfo("Jake Sisko, War Correspondent", 205, Rarity.UNCOMMON, mage.cards.j.JakeSiskoWarCorrespondent.class));
         cards.add(new SetCardInfo("Khaaaaaaaaaaaannn!", 154, Rarity.UNCOMMON, mage.cards.k.Khaaaaaaaaaaaannn.class));
         cards.add(new SetCardInfo("Khan, Despot by Design", 155, Rarity.UNCOMMON, mage.cards.k.KhanDespotByDesign.class, NON_FULL_USE_VARIOUS));
