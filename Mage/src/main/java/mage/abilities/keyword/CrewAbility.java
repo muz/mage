@@ -216,11 +216,15 @@ class CrewCost extends CostImpl {
         if (permanent.hasAbility(CrewWithToughnessAbility.getInstance(), game)
                 || permanent.hasAbility(CrewSaddleWithToughnessAbility.getInstance(), game)) {
             return permanent.getToughness().getValue();
-        } else if (permanent.getAbilities(game).containsClass(CrewIncreasedPowerAbility.class)
-                || permanent.getAbilities(game).containsClass(CrewSaddleIncreasedPowerAbility.class)) {
-            return permanent.getPower().getValue() + 2;
-        } else {
-            return permanent.getPower().getValue();
         }
+        int power = permanent.getPower().getValue();
+        if (permanent.getAbilities(game).containsClass(CrewStationTripledPowerAbility.class)) {
+            power *= 3;
+        }
+        if (permanent.getAbilities(game).containsClass(CrewIncreasedPowerAbility.class)
+            || permanent.getAbilities(game).containsClass(CrewSaddleIncreasedPowerAbility.class)) {
+            power += 2;
+        }
+        return power;
     }
 }

@@ -1,10 +1,13 @@
 package mage.abilities.keyword;
 
+import mage.MageObjectReference;
 import mage.abilities.Ability;
+import mage.abilities.common.CrewStationTripledPowerAbility;
 import mage.abilities.common.SimpleActivatedAbility;
 import mage.abilities.costs.common.TapTargetCost;
 import mage.abilities.effects.OneShotEffect;
 import mage.constants.Outcome;
+import mage.constants.SubType;
 import mage.constants.TimingRule;
 import mage.constants.Zone;
 import mage.counters.CounterType;
@@ -76,10 +79,19 @@ class StationAbilityEffect extends OneShotEffect {
             return false;
         }
         int power = 0;
-        for (Permanent creature : creatures) {
+        for (Permanent tappedCreature : creatures) {
+            Permanent creature = new MageObjectReference(tappedCreature, game).getPermanentOrLKIBattlefield(game);
+            if (creature == null) {
+                continue;
+            }
+            int stationPower = creature.getPower().getValue();
+            if (permanent.hasSubtype(SubType.SPACECRAFT, game)
+                && creature.getAbilities(game).containsClass(CrewStationTripledPowerAbility.class)) {
+                stationPower *= 3;
+            }
             GameEvent event = GameEvent.getEvent(
-                    GameEvent.EventType.STATION_PERMANENT, creature.getId(),
-                    source, source.getControllerId(), creature.getPower().getValue()
+                GameEvent.EventType.STATION_PERMANENT, creature.getId(),
+                source, source.getControllerId(), stationPower
             );
             if (game.replaceEvent(event)) {
                 continue;

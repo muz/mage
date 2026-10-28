@@ -372,6 +372,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("Stratagem Emulator", 30, Rarity.RARE, mage.cards.s.StratagemEmulator.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Sulfur Falls", 406, Rarity.RARE, mage.cards.s.SulfurFalls.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Sulfur Falls", 563, Rarity.RARE, mage.cards.s.SulfurFalls.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Sulu, Heroic Helmsman", 185, Rarity.RARE, mage.cards.s.SuluHeroicHelmsman.class));
         cards.add(new SetCardInfo("Sun Titan", 239, Rarity.MYTHIC, mage.cards.s.SunTitan.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Sun Titan", 428, Rarity.MYTHIC, mage.cards.s.SunTitan.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Sunken Hollow", 407, Rarity.RARE, mage.cards.s.SunkenHollow.class, NON_FULL_USE_VARIOUS));
