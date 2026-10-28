@@ -5,15 +5,18 @@ import mage.abilities.Ability;
 import mage.abilities.common.SimpleActivatedAbility;
 import mage.abilities.costs.common.TapSourceCost;
 import mage.abilities.costs.mana.ManaCostsImpl;
-import mage.abilities.effects.common.DrawCardSourceControllerEffect;
-import mage.abilities.effects.common.DrawCardTargetEffect;
+import mage.abilities.effects.OneShotEffect;
 import mage.abilities.keyword.HasteAbility;
 import mage.abilities.keyword.VigilanceAbility;
 import mage.cards.CardImpl;
 import mage.cards.CardSetInfo;
 import mage.constants.CardType;
+import mage.constants.Outcome;
 import mage.constants.SubType;
 import mage.constants.SuperType;
+import mage.game.Game;
+import mage.players.Player;
+import mage.players.PlayerList;
 import mage.target.common.TargetOpponent;
 
 import java.util.UUID;
@@ -32,18 +35,15 @@ public final class CommanderWilliamRiker extends CardImpl {
         this.power = new MageInt(3);
         this.toughness = new MageInt(3);
 
-        // Vigilance
+        // Vigilance, haste
         this.addAbility(VigilanceAbility.getInstance());
-
-        // Haste
         this.addAbility(HasteAbility.getInstance());
 
         // {1}, {T}: You and target opponent each draw two cards.
         Ability ability = new SimpleActivatedAbility(
-            new DrawCardSourceControllerEffect(2).setText("you"), new ManaCostsImpl<>("{1}")
+            new CommanderWilliamRikerEffect(), new ManaCostsImpl<>("{1}")
         );
         ability.addCost(new TapSourceCost());
-        ability.addEffect(new DrawCardTargetEffect(2).setText("and target opponent each draw two cards"));
         ability.addTarget(new TargetOpponent());
         this.addAbility(ability);
     }
@@ -55,5 +55,39 @@ public final class CommanderWilliamRiker extends CardImpl {
     @Override
     public CommanderWilliamRiker copy() {
         return new CommanderWilliamRiker(this);
+    }
+}
+
+class CommanderWilliamRikerEffect extends OneShotEffect {
+
+    CommanderWilliamRikerEffect() {
+        super(Outcome.DrawCard);
+        staticText = "you and target opponent each draw two cards";
+    }
+
+    private CommanderWilliamRikerEffect(final CommanderWilliamRikerEffect effect) {
+        super(effect);
+    }
+
+    @Override
+    public CommanderWilliamRikerEffect copy() {
+        return new CommanderWilliamRikerEffect(this);
+    }
+
+    @Override
+    public boolean apply(Game game, Ability source) {
+        UUID targetId = getTargetPointer().getFirst(game, source);
+        PlayerList players = game.getPlayerList().copy();
+        players.setCurrent(game.getActivePlayerId());
+        for (UUID playerId : players) {
+            if (!playerId.equals(source.getControllerId()) && !playerId.equals(targetId)) {
+                continue;
+            }
+            Player player = game.getPlayer(playerId);
+            if (player != null) {
+                player.drawCards(2, source, game);
+            }
+        }
+        return true;
     }
 }
