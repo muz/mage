@@ -463,6 +463,7 @@ public enum SubType {
     // T
     TALAXIAN("Talaxian", SubTypeSet.CreatureType),
     TALOSIAN("Talosian", SubTypeSet.CreatureType),
+    TAMARIAN("Tamarian", SubTypeSet.CreatureType),
     TELLARITE("Tellarite", SubTypeSet.CreatureType),
     TENTACLE("Tentacle", SubTypeSet.CreatureType),
     TETRAVITE("Tetravite", SubTypeSet.CreatureType),
