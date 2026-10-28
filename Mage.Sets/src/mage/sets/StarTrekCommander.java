@@ -446,6 +446,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("Umbral Expanse", 574, Rarity.RARE, mage.cards.u.UmbralExpanse.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Underground River", 415, Rarity.RARE, mage.cards.u.UndergroundRiver.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Underground River", 575, Rarity.RARE, mage.cards.u.UndergroundRiver.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Unification", 107, Rarity.RARE, mage.cards.u.Unification.class));
         cards.add(new SetCardInfo("Unwinding Clock", 359, Rarity.RARE, mage.cards.u.UnwindingClock.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Unwinding Clock", 510, Rarity.RARE, mage.cards.u.UnwindingClock.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Valorous Stance", 431, Rarity.UNCOMMON, mage.cards.v.ValorousStance.class));
