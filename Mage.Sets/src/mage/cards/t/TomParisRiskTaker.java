@@ -1,7 +1,7 @@
 package mage.cards.t;
 
 import mage.MageInt;
-import mage.abilities.Ability;
+import mage.abilities.CompoundAbility;
 import mage.abilities.common.DrawNthCardTriggeredAbility;
 import mage.abilities.effects.common.continuous.GainAbilityControlledEffect;
 import mage.abilities.keyword.DoubleStrikeAbility;
@@ -33,19 +33,11 @@ public final class TomParisRiskTaker extends CardImpl {
         this.toughness = new MageInt(4);
 
         // Seek out -- Whenever you draw your second card each turn, creatures you control gain flying, double strike, vigilance, and haste until end of turn.
-        Ability ability = new DrawNthCardTriggeredAbility(new GainAbilityControlledEffect(
-            FlyingAbility.getInstance(), Duration.EndOfTurn, StaticFilters.FILTER_PERMANENT_CREATURES
-        ).setText("creatures you control gain flying"));
-        ability.addEffect(new GainAbilityControlledEffect(
-            DoubleStrikeAbility.getInstance(), Duration.EndOfTurn, StaticFilters.FILTER_PERMANENT_CREATURES
-        ).setText(", double strike"));
-        ability.addEffect(new GainAbilityControlledEffect(
-            VigilanceAbility.getInstance(), Duration.EndOfTurn, StaticFilters.FILTER_PERMANENT_CREATURES
-        ).setText(", vigilance"));
-        ability.addEffect(new GainAbilityControlledEffect(
-            HasteAbility.getInstance(), Duration.EndOfTurn, StaticFilters.FILTER_PERMANENT_CREATURES
-        ).setText("and haste until end of turn"));
-        this.addAbility(ability.withFlavorWord("Seek out"));
+        this.addAbility(new DrawNthCardTriggeredAbility(new GainAbilityControlledEffect(
+            new CompoundAbility(FlyingAbility.getInstance(), DoubleStrikeAbility.getInstance(),
+                VigilanceAbility.getInstance(), HasteAbility.getInstance()),
+            Duration.EndOfTurn, StaticFilters.FILTER_PERMANENT_CREATURES
+        )).withFlavorWord("Seek out"));
     }
 
     private TomParisRiskTaker(final TomParisRiskTaker card) {
