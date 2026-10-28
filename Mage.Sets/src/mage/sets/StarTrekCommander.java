@@ -313,6 +313,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("Reconnaissance Partition", 119, Rarity.RARE, mage.cards.r.ReconnaissancePartition.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Reconnaissance Partition", 353, Rarity.RARE, mage.cards.r.ReconnaissancePartition.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Refute", 579, Rarity.COMMON, mage.cards.r.Refute.class));
+        cards.add(new SetCardInfo("Reg Barclay, Fidgety Fantasist", 102, Rarity.RARE, mage.cards.r.RegBarclayFidgetyFantasist.class));
         cards.add(new SetCardInfo("Reliquary Tower", 551, Rarity.UNCOMMON, mage.cards.r.ReliquaryTower.class));
         cards.add(new SetCardInfo("Return to Dust", 427, Rarity.UNCOMMON, mage.cards.r.ReturnToDust.class));
         cards.add(new SetCardInfo("Rite of Ascension", 103, Rarity.RARE, mage.cards.r.RiteOfAscension.class, NON_FULL_USE_VARIOUS));
