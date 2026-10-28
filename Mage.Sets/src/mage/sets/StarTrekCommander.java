@@ -315,6 +315,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("Refute", 579, Rarity.COMMON, mage.cards.r.Refute.class));
         cards.add(new SetCardInfo("Reliquary Tower", 551, Rarity.UNCOMMON, mage.cards.r.ReliquaryTower.class));
         cards.add(new SetCardInfo("Return to Dust", 427, Rarity.UNCOMMON, mage.cards.r.ReturnToDust.class));
+        cards.add(new SetCardInfo("Right of Vengeance", 27, Rarity.RARE, mage.cards.r.RightOfVengeance.class));
         cards.add(new SetCardInfo("Rite of Ascension", 103, Rarity.RARE, mage.cards.r.RiteOfAscension.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Rite of Ascension", 328, Rarity.RARE, mage.cards.r.RiteOfAscension.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Rite of Oblivion", 478, Rarity.UNCOMMON, mage.cards.r.RiteOfOblivion.class));
