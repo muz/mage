@@ -28,14 +28,14 @@ public final class USSPrometheusPrototype extends CardImpl {
 
         // STATION 4+
         // Flying
-        // 6/6
-        this.addAbility(new StationLevelAbility(4).withLevelAbility(FlyingAbility.getInstance()).withPT(6, 6));
+        this.addAbility(new StationLevelAbility(4).withLevelAbility(FlyingAbility.getInstance()));
 
         // STATION 8+
         // Multivector Assault Mode -- Whenever U.S.S. Prometheus deals combat damage to an opponent, it deals that much damage to each other opponent.
+        // 6/6
         this.addAbility(new StationLevelAbility(8).withLevelAbility(
             new DealsDamageToOpponentTriggeredAbility(new DamageEachOtherOpponentThatMuchEffect(), false, true, true)
-                .withFlavorWord("Multivector Assault Mode")));
+                .withFlavorWord("Multivector Assault Mode")).withPT(6, 6));
     }
 
     private USSPrometheusPrototype(final USSPrometheusPrototype card) {
