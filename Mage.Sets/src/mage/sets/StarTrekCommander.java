@@ -22,6 +22,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("Abrade", 449, Rarity.UNCOMMON, mage.cards.a.Abrade.class));
         cards.add(new SetCardInfo("Academy Ruins", 366, Rarity.RARE, mage.cards.a.AcademyRuins.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Academy Ruins", 512, Rarity.RARE, mage.cards.a.AcademyRuins.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Alexander, Ship's Fool", 81, Rarity.RARE, mage.cards.a.AlexanderShipsFool.class));
         cards.add(new SetCardInfo("Alhammarret's Archive", 337, Rarity.MYTHIC, mage.cards.a.AlhammarretsArchive.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Alhammarret's Archive", 484, Rarity.MYTHIC, mage.cards.a.AlhammarretsArchive.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Amanda Grayson, Logic's Link", 297, Rarity.RARE, mage.cards.a.AmandaGraysonLogicsLink.class, NON_FULL_USE_VARIOUS));
