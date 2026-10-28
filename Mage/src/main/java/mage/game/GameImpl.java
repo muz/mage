@@ -1836,7 +1836,8 @@ public abstract class GameImpl implements Game {
         clearAllBookmarks();
         try {
             applyEffects();
-            while (!isPaused() && !checkIfGameIsOver() && !this.getTurn().isEndTurnRequested()) {
+            while (!isPaused() && !checkIfGameIsOver()
+                && !getTurn().isEndTurnRequested() && !getTurn().isEndPhaseRequested()) {
                 if (!resuming) {
                     state.getPlayers().resetPassed();
                     state.getPlayerList().setCurrent(activePlayerId);
@@ -1958,7 +1959,11 @@ public abstract class GameImpl implements Game {
                 throw new IllegalStateException(e.getMessage(), e);
             }
         } finally {
-            resetLKI();
+            // Triggers created while ending combat still need their sources' last
+            // known information when they go on the stack in the next phase.
+            if (!getTurn().isEndPhaseRequested()) {
+                resetLKI();
+            }
             clearAllBookmarks();
         }
     }
@@ -2438,7 +2443,8 @@ public abstract class GameImpl implements Game {
             if (!checkStateBasedActions()) {
                 // nothing happened so check triggers
                 state.handleSimultaneousEvent(this);
-                if (isPaused() || checkIfGameIsOver() || getTurn().isEndTurnRequested() || !checkTriggered()) {
+                if (isPaused() || checkIfGameIsOver() || getTurn().isEndTurnRequested()
+                    || getTurn().isEndPhaseRequested() || !checkTriggered()) {
                     break;
                 }
             }

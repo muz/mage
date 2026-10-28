@@ -42,12 +42,16 @@ public class Turn implements Serializable {
     }
 
     protected Turn(final Turn turn) {
-        if (turn.currentPhase != null) {
-            this.currentPhase = turn.currentPhase.copy();
-        }
         this.activePlayerId = turn.activePlayerId;
         for (Phase phase : turn.phases) {
-            this.phases.add(phase.copy());
+            Phase copiedPhase = phase.copy();
+            this.phases.add(copiedPhase);
+            if (phase == turn.currentPhase) {
+                this.currentPhase = copiedPhase;
+            }
+        }
+        if (this.currentPhase == null && turn.currentPhase != null) {
+            this.currentPhase = turn.currentPhase.copy();
         }
         this.declareAttackersStepStarted = turn.declareAttackersStepStarted;
         this.endTurn = turn.endTurn;
@@ -162,6 +166,8 @@ public class Turn implements Serializable {
         do {
             nextPhase = it.next();
         } while (nextPhase.type != needPhaseType);
+        // Resume the saved phase, which may be an additional phase of this type.
+        nextPhase = currentPhase;
 
         // play first phase
         TurnMod skipPhaseMod = game.getState().getTurnMods().useNextSkipPhase(activePlayerId, nextPhase.getType());
@@ -370,6 +376,45 @@ public class Turn implements Serializable {
 
     public boolean isEndTurnRequested() {
         return endTurn;
+    }
+
+    public boolean isEndPhaseRequested() {
+        return currentPhase != null && currentPhase.isEndRequested();
+    }
+
+    public boolean endCombat(Game game, Ability source) {
+        if (currentPhase == null || currentPhase.getType() != TurnPhase.COMBAT) {
+            return false;
+        }
+        currentPhase.requestEnd();
+
+        // Discard pending triggers from before this process; triggers created while
+        // ending combat wait until the next phase before being put on the stack.
+        while (game.getState().hasSimultaneousEvents()) {
+            game.getState().handleSimultaneousEvent(game);
+        }
+        game.getState().clearTriggeredAbilities();
+        while (!game.hasEnded() && !game.getStack().isEmpty()) {
+            StackObject stackObject = game.getStack().peekFirst();
+            if (stackObject instanceof Spell) {
+                ((Spell) stackObject).moveToExile(null, "", source, game);
+            } else {
+                game.getStack().remove(stackObject, game);
+            }
+        }
+        game.checkStateAndTriggered();
+
+        List<UUID> combatants = new ArrayList<>(game.getCombat().getAttackers());
+        combatants.addAll(game.getCombat().getBlockers());
+        for (UUID combatantId : combatants) {
+            Permanent permanent = game.getPermanent(combatantId);
+            if (permanent != null) {
+                permanent.removeFromCombat(game);
+            }
+        }
+        game.getCombat().endCombat(game);
+        game.getState().removeEocEffects(game);
+        return true;
     }
 
     public Turn copy() {

@@ -63,7 +63,8 @@ public class ControlCombatRedundancyWatcher extends Watcher {
 
     @Override
     public void watch(GameEvent event, Game game) {
-        if (event.getType() == GameEvent.EventType.END_COMBAT_STEP_POST) {
+        if (event.getType() == GameEvent.EventType.END_COMBAT_STEP_POST
+            || event.getType() == GameEvent.EventType.COMBAT_PHASE_POST) {
             attackingControllers.removeIf(PlayerDuration::isCombat);
             blockingControllers.removeIf(PlayerDuration::isCombat);
         }

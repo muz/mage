@@ -1,14 +1,12 @@
 package mage.cards.m;
 
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import mage.MageObject;
 import mage.abilities.Ability;
 import mage.abilities.common.CastOnlyDuringPhaseStepSourceAbility;
 import mage.abilities.effects.ContinuousRuleModifyingEffectImpl;
-import mage.abilities.effects.OneShotEffect;
+import mage.abilities.effects.common.EndCombatPhaseEffect;
 import mage.cards.CardImpl;
 import mage.cards.CardSetInfo;
 import mage.constants.CardType;
@@ -16,9 +14,7 @@ import mage.constants.Duration;
 import mage.constants.Outcome;
 import mage.constants.TurnPhase;
 import mage.game.Game;
-import mage.game.combat.Combat;
 import mage.game.events.GameEvent;
-import mage.game.stack.Spell;
 
 /**
  *
@@ -36,7 +32,7 @@ public final class MandateOfPeace extends CardImpl {
         this.getSpellAbility().addEffect(new MandateOfPeaceOpponentsCantCastSpellsEffect());
 
         // End the combat phase.
-        this.getSpellAbility().addEffect(new MandateOfPeaceEndCombatEffect().concatBy("<br>"));
+        this.getSpellAbility().addEffect(new EndCombatPhaseEffect().concatBy("<br>"));
     }
 
     private MandateOfPeace(final MandateOfPeace card) {
@@ -84,46 +80,4 @@ class MandateOfPeaceOpponentsCantCastSpellsEffect extends ContinuousRuleModifyin
         return game.getOpponents(source.getControllerId()).contains(event.getPlayerId());
     }
 
-}
-
-class MandateOfPeaceEndCombatEffect extends OneShotEffect {
-
-    MandateOfPeaceEndCombatEffect() {
-        super(Outcome.Benefit);
-        this.staticText = "End the combat phase. <i>(Remove all attackers "
-                + "and blockers from combat. Exile all spells and abilities "
-                + "from the stack, including this spell.)</i>";
-    }
-
-    private MandateOfPeaceEndCombatEffect(final MandateOfPeaceEndCombatEffect effect) {
-        super(effect);
-    }
-
-    @Override
-    public boolean apply(Game game, Ability source) {
-        Combat combat = game.getCombat();
-        Set<UUID> attackerIds = combat.getAttackers();
-        Set<UUID> blockerIds = combat.getBlockers();
-        Stream.concat(blockerIds.stream(), attackerIds.stream())
-                .map(id -> game.getPermanent(id))
-                .filter(e -> e != null)
-                .forEach(permanent -> permanent.removeFromCombat(game));
-        combat.endCombat(game);
-        if (!game.getStack().isEmpty()) {
-            game.getStack().stream()
-                    .filter(Spell.class::isInstance)
-                    .forEach(stackObject -> ((Spell) stackObject).moveToExile(null, "", null, game));
-
-            // TODO: need copy tests, see #12911
-            game.getStack().stream()
-                    .filter(Ability.class::isInstance)
-                    .forEach(stackObject -> game.getStack().remove(stackObject, game));
-        }
-        return true;
-    }
-
-    @Override
-    public MandateOfPeaceEndCombatEffect copy() {
-        return new MandateOfPeaceEndCombatEffect(this);
-    }
 }

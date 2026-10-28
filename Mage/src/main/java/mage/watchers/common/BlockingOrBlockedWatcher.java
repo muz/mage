@@ -32,6 +32,7 @@ public class BlockingOrBlockedWatcher extends Watcher {
                         .add(new MageObjectReference(event.getSourceId(), game));
                 return;
             case END_COMBAT_STEP_POST:
+            case COMBAT_PHASE_POST:
                 blockerMap.clear();
                 return;
             case REMOVED_FROM_COMBAT:

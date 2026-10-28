@@ -28,6 +28,7 @@ public abstract class Phase implements Serializable {
     protected UUID activePlayerId;
     protected Step currentStep;
     protected int count;
+    private boolean endRequested;
 
     public abstract Phase copy();
 
@@ -44,6 +45,7 @@ public abstract class Phase implements Serializable {
             this.currentStep = phase.currentStep.copy();
         }
         this.count = phase.count;
+        this.endRequested = phase.endRequested;
         for (Step step : phase.steps) {
             this.steps.add(step.copy());
         }
@@ -63,6 +65,15 @@ public abstract class Phase implements Serializable {
 
     public void resetCount() {
         count = 0;
+        endRequested = false;
+    }
+
+    public void requestEnd() {
+        endRequested = true;
+    }
+
+    public boolean isEndRequested() {
+        return endRequested;
     }
 
     public int getCount() {
@@ -79,6 +90,9 @@ public abstract class Phase implements Serializable {
         if (beginPhase(game, activePlayerId)) {
 
             for (Step step : steps) {
+                if (endRequested) {
+                    break;
+                }
                 if (game.isPaused() || game.checkIfGameIsOver()) {
                     return false;
                 }
@@ -140,7 +154,7 @@ public abstract class Phase implements Serializable {
             currentStep = step;
         } while (step.getType() != stepType);
         resumeStep(game, wasPaused);
-        while (it.hasNext()) {
+        while (it.hasNext() && !endRequested) {
             step = it.next();
             if (game.isPaused() || game.checkIfGameIsOver()) {
                 return false;
@@ -190,6 +204,10 @@ public abstract class Phase implements Serializable {
     }
 
     public void postPriority(Game game, UUID activePlayerId) {
+        if (endRequested) {
+            game.emptyManaPools(null);
+            return;
+        }
         currentStep.endStep(game, activePlayerId);
         //20091005 - 500.4/703.4n
         game.emptyManaPools(null);
@@ -239,7 +257,7 @@ public abstract class Phase implements Serializable {
     }
 
     private void playExtraSteps(Game game, PhaseStep afterStep) {
-        while (true) {
+        while (!endRequested) {
             TurnMod extraStepMod = game.getState().getTurnMods().useNextExtraStep(activePlayerId, afterStep);
             if (extraStepMod == null) {
                 return;
