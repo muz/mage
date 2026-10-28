@@ -84,6 +84,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("Class-4 Tactical Cube", 339, Rarity.RARE, mage.cards.c.Class4TacticalCube.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Clifftop Retreat", 371, Rarity.RARE, mage.cards.c.ClifftopRetreat.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Clifftop Retreat", 518, Rarity.RARE, mage.cards.c.ClifftopRetreat.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Cmdr. Troi, Outgoing Empath", 89, Rarity.RARE, mage.cards.c.CmdrTroiOutgoingEmpath.class));
         cards.add(new SetCardInfo("Co-Option Adjutant", 251, Rarity.RARE, mage.cards.c.CoOptionAdjutant.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Co-Option Adjutant", 39, Rarity.RARE, mage.cards.c.CoOptionAdjutant.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Coastal Peak", 372, Rarity.RARE, mage.cards.c.CoastalPeak.class, NON_FULL_USE_VARIOUS));
