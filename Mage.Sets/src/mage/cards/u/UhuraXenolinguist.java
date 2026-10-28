@@ -11,7 +11,6 @@ import mage.constants.CardType;
 import mage.constants.SubType;
 import mage.constants.SuperType;
 import mage.filter.common.FilterCreaturePermanent;
-import mage.filter.predicate.Predicates;
 
 import java.util.UUID;
 
@@ -23,7 +22,7 @@ public final class UhuraXenolinguist extends CardImpl {
     private static final FilterCreaturePermanent filter = new FilterCreaturePermanent("non-Human creature");
 
     static {
-        filter.add(Predicates.not(SubType.HUMAN.getPredicate()));
+        filter.add(SubType.HUMAN.getPredicate().negate());
     }
 
     public UhuraXenolinguist(UUID ownerId, CardSetInfo setInfo) {
