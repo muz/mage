@@ -229,6 +229,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("K'Vort-Class Raider", 350, Rarity.RARE, mage.cards.k.KVortClassRaider.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("K't'inga-Class Battle Cruiser", 115, Rarity.RARE, mage.cards.k.KtingaClassBattleCruiser.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("K't'inga-Class Battle Cruiser", 349, Rarity.RARE, mage.cards.k.KtingaClassBattleCruiser.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Kes, Evolving Telepath", 45, Rarity.RARE, mage.cards.k.KesEvolvingTelepath.class));
         cards.add(new SetCardInfo("Kirk, Enterprising Captain", 198, Rarity.MYTHIC, mage.cards.k.KirkEnterprisingCaptain.class));
         cards.add(new SetCardInfo("Kirk, Man of Action", 180, Rarity.RARE, mage.cards.k.KirkManOfAction.class));
         cards.add(new SetCardInfo("Klingon Strike Force", 199, Rarity.RARE, mage.cards.k.KlingonStrikeForce.class));

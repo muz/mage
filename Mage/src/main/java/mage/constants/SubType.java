@@ -350,6 +350,7 @@ public enum SubType {
     NOMAD("Nomad", SubTypeSet.CreatureType),
     NYMPH("Nymph", SubTypeSet.CreatureType),
     // O
+    OCAMPA("Ocampa", SubTypeSet.CreatureType),
     OCTOPUS("Octopus", SubTypeSet.CreatureType),
     OFFICER("Officer", SubTypeSet.CreatureType),
     OGRE("Ogre", SubTypeSet.CreatureType),
