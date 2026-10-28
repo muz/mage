@@ -10,7 +10,6 @@ import mage.constants.CardType;
 import mage.constants.SubType;
 import mage.constants.SuperType;
 import mage.filter.common.FilterCreaturePermanent;
-import mage.filter.predicate.Predicates;
 import mage.filter.predicate.permanent.AttackingPredicate;
 import mage.game.permanent.token.FaerieToken;
 
@@ -25,7 +24,7 @@ public final class WorfStillNotMerry extends CardImpl {
 
     static {
         filter.add(AttackingPredicate.instance);
-        filter.add(Predicates.not(SubType.FAERIE.getPredicate()));
+        filter.add(SubType.FAERIE.getPredicate().negate());
     }
 
     public WorfStillNotMerry(UUID ownerId, CardSetInfo setInfo) {
