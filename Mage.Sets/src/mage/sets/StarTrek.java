@@ -339,6 +339,10 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Subcommander T'Pol", 82, Rarity.RARE, mage.cards.s.SubcommanderTPol.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Subcommander T'Pol", 453, Rarity.RARE, mage.cards.s.SubcommanderTPol.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Subspace Anomaly", 300, Rarity.UNCOMMON, mage.cards.s.SubspaceAnomaly.class));
+        cards.add(new SetCardInfo("Sulu, Space Swashbuckler", 37, Rarity.RARE, mage.cards.s.SuluSpaceSwashbuckler.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Sulu, Space Swashbuckler", 356, Rarity.RARE, mage.cards.s.SuluSpaceSwashbuckler.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Sulu, Space Swashbuckler", 407, Rarity.RARE, mage.cards.s.SuluSpaceSwashbuckler.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Sulu, Space Swashbuckler", 531, Rarity.RARE, mage.cards.s.SuluSpaceSwashbuckler.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Support Mission", 216, Rarity.UNCOMMON, mage.cards.s.SupportMission.class));
         cards.add(new SetCardInfo("Suurok-Class Science Vessel", 83, Rarity.COMMON, mage.cards.s.SuurokClassScienceVessel.class));
         cards.add(new SetCardInfo("Suus Mahna Practitioner", 84, Rarity.COMMON, mage.cards.s.SuusMahnaPractitioner.class));
