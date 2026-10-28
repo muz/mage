@@ -493,6 +493,7 @@ public enum SubType {
     // V
     VAMPIRE("Vampire", SubTypeSet.CreatureType),
     VARMINT("Varmint", SubTypeSet.CreatureType),
+    VAU_N_AKAT("Vau-N'Akat", SubTypeSet.CreatureType),
     VEDALKEN("Vedalken", SubTypeSet.CreatureType),
     VILLAIN("Villain", SubTypeSet.CreatureType),
     VOLVER("Volver", SubTypeSet.CreatureType),
