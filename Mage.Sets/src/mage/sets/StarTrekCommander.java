@@ -243,6 +243,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("Kurn, Son of Mogh", 273, Rarity.RARE, mage.cards.k.KurnSonOfMogh.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Kurn, Son of Mogh", 60, Rarity.RARE, mage.cards.k.KurnSonOfMogh.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("La Forge, Perceptive Engineer", 147, Rarity.UNCOMMON, mage.cards.l.LaForgePerceptiveEngineer.class));
+        cards.add(new SetCardInfo("La Forge, Thoughtful as Ever", 188, Rarity.RARE, mage.cards.l.LaForgeThoughtfulAsEver.class));
         cards.add(new SetCardInfo("Last Gasp", 580, Rarity.COMMON, mage.cards.l.LastGasp.class));
         cards.add(new SetCardInfo("Lieutenant Hikaru Sulu", 305, Rarity.RARE, mage.cards.l.LieutenantHikaruSulu.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Lieutenant Hikaru Sulu", 80, Rarity.RARE, mage.cards.l.LieutenantHikaruSulu.class, NON_FULL_USE_VARIOUS));
