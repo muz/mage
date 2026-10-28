@@ -360,6 +360,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("Spire of Industry", 405, Rarity.RARE, mage.cards.s.SpireOfIndustry.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Spire of Industry", 562, Rarity.RARE, mage.cards.s.SpireOfIndustry.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Spock, Logical Choice", 194, Rarity.MYTHIC, mage.cards.s.SpockLogicalChoice.class));
+        cards.add(new SetCardInfo("Spock, Voice of Reason", 181, Rarity.RARE, mage.cards.s.SpockVoiceOfReason.class));
         cards.add(new SetCardInfo("Spot, Felis catus", 237, Rarity.RARE, mage.cards.s.SpotFelisCatus.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Spot, Felis catus", 29, Rarity.RARE, mage.cards.s.SpotFelisCatus.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Starfleet Communicator", 121, Rarity.RARE, mage.cards.s.StarfleetCommunicator.class, NON_FULL_USE_VARIOUS));
