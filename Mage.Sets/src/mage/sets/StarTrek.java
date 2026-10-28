@@ -141,6 +141,9 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Energize", 56, Rarity.UNCOMMON, mage.cards.e.Energize.class));
         cards.add(new SetCardInfo("Engineered Explosives", 264, Rarity.RARE, mage.cards.e.EngineeredExplosives.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Engineered Explosives", 480, Rarity.RARE, mage.cards.e.EngineeredExplosives.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Ensign Pavel Chekov", 409, Rarity.UNCOMMON, mage.cards.e.EnsignPavelChekov.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Ensign Pavel Chekov", 533, Rarity.UNCOMMON, mage.cards.e.EnsignPavelChekov.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Ensign Pavel Chekov", 57, Rarity.UNCOMMON, mage.cards.e.EnsignPavelChekov.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Enterprise NX-01", 58, Rarity.UNCOMMON, mage.cards.e.EnterpriseNX01.class));
         cards.add(new SetCardInfo("Excalbian Gamemaster", 16, Rarity.MYTHIC, mage.cards.e.ExcalbianGamemaster.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Excalbian Gamemaster", 403, Rarity.MYTHIC, mage.cards.e.ExcalbianGamemaster.class, NON_FULL_USE_VARIOUS));
