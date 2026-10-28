@@ -191,6 +191,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("Gorn Captain", 172, Rarity.COMMON, mage.cards.g.GornCaptain.class));
         cards.add(new SetCardInfo("Grand Crescendo", 222, Rarity.RARE, mage.cards.g.GrandCrescendo.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Grand Crescendo", 423, Rarity.RARE, mage.cards.g.GrandCrescendo.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Grilka, Widowed Warrior", 70, Rarity.RARE, mage.cards.g.GrilkaWidowedWarrior.class));
         cards.add(new SetCardInfo("Growth Spiral", 476, Rarity.COMMON, mage.cards.g.GrowthSpiral.class));
         cards.add(new SetCardInfo("Guardian Project", 302, Rarity.RARE, mage.cards.g.GuardianProject.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Guardian Project", 463, Rarity.RARE, mage.cards.g.GuardianProject.class, NON_FULL_USE_VARIOUS));
