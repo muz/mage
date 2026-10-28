@@ -65,6 +65,9 @@ public class CopyEffect extends ContinuousEffectImpl {
             permanent = game.getPermanentEntering(copyToObjectId);
             if (permanent != null) {
                 copyToPermanent(permanent, game, source);
+                // Copying must not erase characteristic changes specified by
+                // the effect putting this permanent onto the battlefield.
+                game.getContinuousEffects().applyToEnteringPermanent(permanent, game);
                 // Apply Room characteristics since effects aren't applied to entering permanents yet
                 if (permanent.hasSubtype(SubType.ROOM, game)) {
                     Abilities<Ability> abilities = permanent.getAbilities();

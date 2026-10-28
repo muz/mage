@@ -7,6 +7,7 @@ import mage.constants.Duration;
 import mage.constants.Layer;
 import mage.constants.SubLayer;
 import mage.game.Game;
+import mage.game.permanent.Permanent;
 import mage.target.targetpointer.TargetPointer;
 
 import java.util.EnumSet;
@@ -34,6 +35,13 @@ public interface ContinuousEffect extends Effect {
     void setOrder(long order);
 
     boolean apply(Layer layer, SubLayer sublayer, Ability source, Game game);
+
+    /**
+     * Apply changes specified by a zone-moving effect before entry replacements
+     * are checked. The permanent is not on the battlefield yet.
+     */
+    default void applyToEnteringPermanent(Permanent permanent, Ability source, Game game) {
+    }
 
     boolean hasLayer(Layer layer);
 

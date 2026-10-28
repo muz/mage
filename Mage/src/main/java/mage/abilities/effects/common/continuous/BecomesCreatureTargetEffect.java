@@ -144,7 +144,7 @@ public class BecomesCreatureTargetEffect extends ContinuousEffectImpl {
         return result;
     }
 
-    private void applyTypes(Permanent permanent, Game game) {
+    protected void applyTypes(Permanent permanent, Game game) {
         // card types: token's replace all others (205.1a) or keep with "in addition", "still a land" (205.1b)
         List<CardType> newCardTypes = new ArrayList<>();
         if (keepPriorTypes || (!loseOtherCardTypes && !isTokenSetCardTypes(game))) {

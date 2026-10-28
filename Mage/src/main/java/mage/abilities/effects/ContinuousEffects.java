@@ -420,6 +420,19 @@ public class ContinuousEffects implements Serializable {
         return replaceEffects;
     }
 
+    public void applyToEnteringPermanent(Permanent permanent, Game game) {
+        // These hooks belong to the effect moving the card. Do not refresh
+        // layer timestamps while preparing an entering permanent.
+        for (ContinuousEffect effect : layeredEffects) {
+            if (effect.isDiscarded()) {
+                continue;
+            }
+            for (Ability ability : layeredEffects.getAbility(effect.getId())) {
+                effect.applyToEnteringPermanent(permanent, ability, game);
+            }
+        }
+    }
+
     private boolean checkAbilityStillExists(Ability ability, ContinuousEffect effect, GameEvent event, Game game) {
         switch (effect.getDuration()) { // effects with fixed duration don't need an object with the source ability (e.g. a silence cast with isochronic Scepter has no more a card object
             case EndOfCombat:
