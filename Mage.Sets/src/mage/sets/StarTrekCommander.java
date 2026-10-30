@@ -90,6 +90,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("Coastal Peak", 519, Rarity.RARE, mage.cards.c.CoastalPeak.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Collective Override", 316, Rarity.RARE, mage.cards.c.CollectiveOverride.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Collective Override", 90, Rarity.RARE, mage.cards.c.CollectiveOverride.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Colossal Clone Master", 38, Rarity.RARE, mage.cards.c.ColossalCloneMaster.class));
         cards.add(new SetCardInfo("Combat Celebrant", 281, Rarity.MYTHIC, mage.cards.c.CombatCelebrant.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Combat Celebrant", 451, Rarity.MYTHIC, mage.cards.c.CombatCelebrant.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Command Beacon", 373, Rarity.RARE, mage.cards.c.CommandBeacon.class, NON_FULL_USE_VARIOUS));
