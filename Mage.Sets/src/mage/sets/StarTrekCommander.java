@@ -75,6 +75,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("Chief Kyle, Transporter Tech", 87, Rarity.RARE, mage.cards.c.ChiefKyleTransporterTech.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Chief Miles O'Brien", 249, Rarity.RARE, mage.cards.c.ChiefMilesOBrien.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Chief Miles O'Brien", 37, Rarity.RARE, mage.cards.c.ChiefMilesOBrien.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Chief Montgomery Scott", 88, Rarity.RARE, mage.cards.c.ChiefMontgomeryScott.class));
         cards.add(new SetCardInfo("Choked Estuary", 370, Rarity.RARE, mage.cards.c.ChokedEstuary.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Choked Estuary", 517, Rarity.RARE, mage.cards.c.ChokedEstuary.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Christine Chapel, Combat Medic", 300, Rarity.RARE, mage.cards.c.ChristineChapelCombatMedic.class, NON_FULL_USE_VARIOUS));
