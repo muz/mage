@@ -253,6 +253,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("Loran of the Third Path", 424, Rarity.RARE, mage.cards.l.LoranOfTheThirdPath.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Lotus Cobra", 306, Rarity.RARE, mage.cards.l.LotusCobra.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Lotus Cobra", 466, Rarity.RARE, mage.cards.l.LotusCobra.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Lt. Arex, Ever-Adapting", 98, Rarity.RARE, mage.cards.l.LtArexEverAdapting.class));
         cards.add(new SetCardInfo("M'Ress, Crew Coordinator", 233, Rarity.RARE, mage.cards.m.MRessCrewCoordinator.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("M'Ress, Crew Coordinator", 26, Rarity.RARE, mage.cards.m.MRessCrewCoordinator.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Martok, Hero of the Empire", 23, Rarity.RARE, mage.cards.m.MartokHeroOfTheEmpire.class, NON_FULL_USE_VARIOUS));
