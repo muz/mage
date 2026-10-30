@@ -322,6 +322,7 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Sickbay", 268, Rarity.UNCOMMON, mage.cards.s.Sickbay.class));
         cards.add(new SetCardInfo("Silicate Surveyor", 172, Rarity.COMMON, mage.cards.s.SilicateSurveyor.class));
         cards.add(new SetCardInfo("Spatial Anomaly", 296, Rarity.UNCOMMON, mage.cards.s.SpatialAnomaly.class));
+        cards.add(new SetCardInfo("Species 8472", 214, Rarity.UNCOMMON, mage.cards.s.Species8472.class));
         cards.add(new SetCardInfo("Spock, Always Your Friend", 253, Rarity.UNCOMMON, mage.cards.s.SpockAlwaysYourFriend.class));
         cards.add(new SetCardInfo("Stable Wormhole", 215, Rarity.RARE, mage.cards.s.StableWormhole.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Stable Wormhole", 473, Rarity.RARE, mage.cards.s.StableWormhole.class, NON_FULL_USE_VARIOUS));
