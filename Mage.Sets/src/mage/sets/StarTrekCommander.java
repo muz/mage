@@ -287,6 +287,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("Painful Truths", 447, Rarity.RARE, mage.cards.p.PainfulTruths.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Path of Ancestry", 545, Rarity.COMMON, mage.cards.p.PathOfAncestry.class));
         cards.add(new SetCardInfo("Path to Exile", 425, Rarity.UNCOMMON, mage.cards.p.PathToExile.class));
+        cards.add(new SetCardInfo("Pavel Chekov, First Posting", 101, Rarity.RARE, mage.cards.p.PavelChekovFirstPosting.class));
         cards.add(new SetCardInfo("Pelia, Immortal Innovator", 148, Rarity.UNCOMMON, mage.cards.p.PeliaImmortalInnovator.class));
         cards.add(new SetCardInfo("Perilous Landscape", 546, Rarity.COMMON, mage.cards.p.PerilousLandscape.class));
         cards.add(new SetCardInfo("Pest Control", 326, Rarity.MYTHIC, mage.cards.p.PestControl.class, NON_FULL_USE_VARIOUS));
