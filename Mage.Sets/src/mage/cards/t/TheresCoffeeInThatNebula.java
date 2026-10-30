@@ -8,9 +8,11 @@ import mage.constants.CardType;
 import mage.constants.ComparisonType;
 import mage.constants.PutCards;
 import mage.constants.SubType;
-import mage.filter.common.FilterPermanentCard;
+import mage.filter.FilterCard;
 import mage.filter.predicate.Predicates;
 import mage.filter.predicate.mageobject.ManaValuePredicate;
+import mage.filter.predicate.mageobject.PermanentPredicate;
+
 import java.util.UUID;
 
 /**
@@ -18,18 +20,13 @@ import java.util.UUID;
  */
 public final class TheresCoffeeInThatNebula extends CardImpl {
 
-    private static final FilterPermanentCard filter = new FilterPermanentCard("a Plains card or nonland permanent card with mana value 3 or less");
+    private static final FilterCard filter = new FilterCard("a Plains card or nonland permanent card with mana value 3 or less");
 
     static {
-        filter.add(
-            Predicates.or(
-                SubType.PLAINS.getPredicate(),
-                Predicates.and(
-                    Predicates.not(CardType.LAND.getPredicate()),
-                    new ManaValuePredicate(ComparisonType.OR_LESS, 3)
-                )
-            )
-        );
+        filter.add(Predicates.or(SubType.PLAINS.getPredicate(), Predicates.and(
+            PermanentPredicate.instance, Predicates.not(CardType.LAND.getPredicate()),
+            new ManaValuePredicate(ComparisonType.OR_LESS, 3)
+        )));
     }
 
     public TheresCoffeeInThatNebula(UUID ownerId, CardSetInfo setInfo) {
