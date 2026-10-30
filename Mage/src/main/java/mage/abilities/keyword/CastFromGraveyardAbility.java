@@ -26,6 +26,8 @@ import java.util.UUID;
  */
 public abstract class CastFromGraveyardAbility extends SpellAbility {
 
+    private static final String GRAVEYARD_CAST_COST_TAG_PREFIX = "CastFromGraveyardCost:";
+
     protected String abilityName;
     private SpellAbility spellAbilityToResolve;
 
@@ -111,6 +113,10 @@ public abstract class CastFromGraveyardAbility extends SpellAbility {
         spellAbilityCopy.setId(this.getId());
         spellAbilityCopy.clearManaCosts();
         spellAbilityCopy.clearManaCostsToPay();
+        // Keep these costs distinct from the spell's own additional costs after merging.
+        for (Cost cost : super.getCosts()) {
+            spellAbilityCopy.setCostsTag(GRAVEYARD_CAST_COST_TAG_PREFIX + cost.getId(), true);
+        }
         spellAbilityCopy.addCost(this.getCosts().copy());
         spellAbilityCopy.addCost(this.getManaCosts().copy());
         spellAbilityCopy.setSpellAbilityCastMode(this.getSpellAbilityCastMode());
@@ -120,6 +126,22 @@ public abstract class CastFromGraveyardAbility extends SpellAbility {
         effect.setTargetPointer(new FixedTarget(getSourceId(), game.getState().getZoneChangeCounter(getSourceId())));
         game.addEffect(effect, this);
         return spellAbilityToResolve;
+    }
+
+    /**
+     * Identifies a nonmana cost supplied by the graveyard casting ability, both
+     * before casting and on the resulting spell. Cost IDs survive ability copies.
+     */
+    public static boolean isGraveyardCastCost(SpellAbility ability, String costId, Game game) {
+        if (ability instanceof CastFromGraveyardAbility) {
+            CastFromGraveyardAbility graveyardAbility = (CastFromGraveyardAbility) ability;
+            if (graveyardAbility.spellAbilityToResolve == null) {
+                return graveyardAbility.getCosts().stream()
+                    .anyMatch(cost -> cost.getId().toString().equals(costId));
+            }
+            ability = graveyardAbility.spellAbilityToResolve;
+        }
+        return CardUtil.getSourceCostsTag(game, ability, GRAVEYARD_CAST_COST_TAG_PREFIX + costId, false);
     }
 
     @Override

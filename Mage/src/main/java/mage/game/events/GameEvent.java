@@ -727,6 +727,13 @@ public class GameEvent implements Serializable {
          data       id of the ability being paid for
          */
         PAY_SACRIFICE_COST,
+        /* for checking return to hand as a cost (a legality query, not a zone change)
+         targetId   the permanent to be returned
+         sourceId   of the ability being paid for
+         playerId   the player paying the cost
+         data       id of the cost
+         */
+        PAY_RETURN_TO_HAND_COST,
         EARTHBENDED,
         AIRBENDED,
         FIREBENDED,
