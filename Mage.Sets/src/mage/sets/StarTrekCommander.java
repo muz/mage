@@ -246,6 +246,7 @@ public final class StarTrekCommander extends ExpansionSet {
         cards.add(new SetCardInfo("Last Gasp", 580, Rarity.COMMON, mage.cards.l.LastGasp.class));
         cards.add(new SetCardInfo("Lieutenant Hikaru Sulu", 305, Rarity.RARE, mage.cards.l.LieutenantHikaruSulu.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Lieutenant Hikaru Sulu", 80, Rarity.RARE, mage.cards.l.LieutenantHikaruSulu.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Lieutenant Nyota Uhura", 46, Rarity.RARE, mage.cards.l.LieutenantNyotaUhura.class));
         cards.add(new SetCardInfo("Lightning Greaves", 496, Rarity.UNCOMMON, mage.cards.l.LightningGreaves.class));
         cards.add(new SetCardInfo("Locutus of Borg", 209, Rarity.MYTHIC, mage.cards.l.LocutusOfBorg.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Locutus of Borg", 97, Rarity.MYTHIC, mage.cards.l.LocutusOfBorg.class, NON_FULL_USE_VARIOUS));
