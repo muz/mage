@@ -177,6 +177,8 @@ public final class StarTrek extends ExpansionSet {
         cards.add(new SetCardInfo("Grand Nagus Zek", 112, Rarity.RARE, mage.cards.g.GrandNagusZek.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Grand Nagus Zek", 458, Rarity.RARE, mage.cards.g.GrandNagusZek.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Guidance Failure", 60, Rarity.COMMON, mage.cards.g.GuidanceFailure.class));
+        cards.add(new SetCardInfo("Gul Dukat, Colonial Prefect", 113, Rarity.MYTHIC, mage.cards.g.GulDukatColonialPrefect.class, NON_FULL_USE_VARIOUS));
+        cards.add(new SetCardInfo("Gul Dukat, Colonial Prefect", 459, Rarity.MYTHIC, mage.cards.g.GulDukatColonialPrefect.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Hallowed Fountain", 286, Rarity.RARE, mage.cards.h.HallowedFountain.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Hallowed Fountain", 392, Rarity.RARE, mage.cards.h.HallowedFountain.class, NON_FULL_USE_VARIOUS));
         cards.add(new SetCardInfo("Hallowed Fountain", 487, Rarity.RARE, mage.cards.h.HallowedFountain.class, NON_FULL_USE_VARIOUS));

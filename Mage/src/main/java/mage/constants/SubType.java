@@ -146,6 +146,7 @@ public enum SubType {
     CAMARID("Camarid", SubTypeSet.CreatureType),
     CAMEL("Camel", SubTypeSet.CreatureType),
     CAPYBARA("Capybara", SubTypeSet.CreatureType),
+    CARDASSIAN("Cardassian", SubTypeSet.CreatureType),
     CARIBOU("Caribou", SubTypeSet.CreatureType),
     CARRIER("Carrier", SubTypeSet.CreatureType),
     CAT("Cat", SubTypeSet.CreatureType),
