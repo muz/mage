@@ -316,6 +316,7 @@ public enum SubType {
     MANTICORE("Manticore", SubTypeSet.CreatureType),
     MASTICORE("Masticore", SubTypeSet.CreatureType),
     MEDUSAN("Medusan", SubTypeSet.CreatureType),
+    MELKOTIAN("Melkotian", SubTypeSet.CreatureType),
     MERCENARY("Mercenary", SubTypeSet.CreatureType),
     MERFOLK("Merfolk", SubTypeSet.CreatureType),
     METATHRAN("Metathran", SubTypeSet.CreatureType),
