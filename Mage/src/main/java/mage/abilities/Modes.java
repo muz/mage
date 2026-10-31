@@ -14,6 +14,7 @@ import mage.constants.TargetController;
 import mage.filter.Filter;
 import mage.filter.FilterPlayer;
 import mage.game.Game;
+import mage.game.events.GameEvent;
 import mage.players.Player;
 import mage.target.common.TargetOpponent;
 import mage.util.CardUtil;
@@ -334,18 +335,25 @@ public class Modes extends LinkedHashMap<UUID, Mode> implements Copyable<Modes> 
                 && getOnceTurnNum(game, source) != game.getTurnNum();
     }
 
-    private boolean isSelectedValid(Ability source, Game game) {
+    private boolean finishChoosing(Ability source, Game game, UUID choosingPlayerId) {
         if (isLimitUsageByOnce()) {
             setOnceSelectedModes(source, game);
         }
-        return this.selectedModes.size() >= this.getMinModes()
-                || (this.selectedModes.size() == 0 && mayChooseNone);
+        boolean valid = this.selectedModes.size() >= this.getMinModes()
+            || (this.selectedModes.size() == 0 && mayChooseNone);
+        // Choosing several modes is one dilemma; a nonmodal ability or choosing none is not.
+        if (valid && this.size() > 1 && !this.selectedModes.isEmpty()) {
+            game.fireEvent(GameEvent.getEvent(GameEvent.EventType.FACED_DILEMMA, source.getId(), source, choosingPlayerId));
+        }
+        return valid;
     }
 
     public boolean choose(Game game, Ability source) {
+        UUID choosingPlayerId = source.getControllerId();
         // in multi-modal abilities it must keep already selected modes and targets
         // to make sure AI simulations will keep predefined setup (modes + targets)
-        if (this.isPreselected()) {
+        // Controller preselections cannot replace an opponent's choice.
+        if (this.isPreselected() && chooseController != TargetController.OPPONENT) {
             int selectedTargetsCount = this.values().stream()
                     .mapToInt(m -> m.getTargets().stream()
                             .mapToInt(t -> t.getTargets().size())
@@ -353,7 +361,7 @@ public class Modes extends LinkedHashMap<UUID, Mode> implements Copyable<Modes> 
                     )
                     .sum();
             logger.debug("modes choose, keep predefined modes " + this.selectedModes.size() + " and targets " + selectedTargetsCount);
-            if (isSelectedValid(source, game)) {
+            if (finishChoosing(source, game, choosingPlayerId)) {
                 return true;
             }
             logger.warn("modes choose, not valid - need fallback to manual select (something wrong with AI targets generation?)");
@@ -378,7 +386,7 @@ public class Modes extends LinkedHashMap<UUID, Mode> implements Copyable<Modes> 
         // stack. (See rule 603.3c.)
         List<Mode> availableModes = getAvailableModes(source, game);
         if (availableModes.size() == 0) {
-            return isSelectedValid(source, game);
+            return finishChoosing(source, game, choosingPlayerId);
         }
 
         // modal spells must show choose dialog even for 1 option, so check this.size instead availableModes.size here
@@ -396,11 +404,23 @@ public class Modes extends LinkedHashMap<UUID, Mode> implements Copyable<Modes> 
                 }
             }
 
+            // 700.2d: the player choosing modes need not control the spell or ability.
+            // Determine that player for automatic selections as well as manual ones.
+            if (chooseController == TargetController.OPPONENT) {
+                TargetOpponent targetOpponent = new TargetOpponent();
+                targetOpponent.choose(Outcome.Benefit, source.getControllerId(), source.getSourceId(), source, game);
+                choosingPlayerId = targetOpponent.getFirstTarget();
+            }
+            Player player = game.getPlayer(choosingPlayerId);
+            if (player == null) {
+                return false;
+            }
+
             // choose random
             if (this.isRandom) {
                 // TODO: research rules of Cult of Skaro after WHO release (is it random from all modes or from available/valid)
                 this.addSelectedMode(availableModes.get(RandomUtil.nextInt(availableModes.size())).getId());
-                return isSelectedValid(source, game);
+                return finishChoosing(source, game, choosingPlayerId);
             }
 
             // UX: check if all modes can be activated automatically
@@ -415,24 +435,7 @@ public class Modes extends LinkedHashMap<UUID, Mode> implements Copyable<Modes> 
                         this.addSelectedMode(mode.getId());
                     }
                 }
-                return isSelectedValid(source, game);
-            }
-
-            // 700.2d
-            // Some spells and abilities specify that a player other than their controller chooses a mode for it.
-            // In that case, the other player does so when the spell or ability's controller normally would do so.
-            // If there is more than one other player who could make such a choice, the spell or ability's controller decides which of those players will make the choice.
-            UUID playerId;
-            if (chooseController == TargetController.OPPONENT) {
-                TargetOpponent targetOpponent = new TargetOpponent();
-                targetOpponent.choose(Outcome.Benefit, source.getControllerId(), source.getSourceId(), source, game);
-                playerId = targetOpponent.getFirstTarget();
-            } else {
-                playerId = source.getControllerId();
-            }
-            Player player = game.getPlayer(playerId);
-            if (player == null) {
-                return false;
+                return finishChoosing(source, game, choosingPlayerId);
             }
 
             // player chooses modes manually
@@ -463,7 +466,7 @@ public class Modes extends LinkedHashMap<UUID, Mode> implements Copyable<Modes> 
                 Mode choice = player.chooseMode(this, source, game);
                 if (choice == null) {
                     // user press cancel/stop in choose dialog or nothing to choose
-                    return isSelectedValid(source, game);
+                    return finishChoosing(source, game, choosingPlayerId);
                 }
                 this.addSelectedMode(choice.getId());
                 if (currentMode == null) {
@@ -477,7 +480,7 @@ public class Modes extends LinkedHashMap<UUID, Mode> implements Copyable<Modes> 
                         .stream()
                         .map(this::get)
                         .map(Mode::getEffects)
-                        .forEach(effects -> effects.setValue("choosingPlayer", playerId));
+                        .forEach(effects -> effects.setValue("choosingPlayer", player.getId()));
             }
         } else {
             // SINGLE MODAL ability
@@ -489,7 +492,7 @@ public class Modes extends LinkedHashMap<UUID, Mode> implements Copyable<Modes> 
             }
         }
 
-        return isSelectedValid(source, game);
+        return finishChoosing(source, game, choosingPlayerId);
     }
 
     /**

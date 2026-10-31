@@ -87,6 +87,7 @@ public class GameEvent implements Serializable {
          */
         MADNESS_CARD_EXILED,
         INVESTIGATED, // playerId is the player who investigated
+        FACED_DILEMMA, // playerId is the player choosing modes; targetId is the modal ability's id
         KICKED,
         /* DISCARD_CARD
          flag        event is result of effect (1) or result of cost (0)
